@@ -9,8 +9,8 @@ CREATE TABLE users (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     birth_date DATE NOT NULL,
-    weight NUMERIC(4,1) NOT NULL, -- in kg
-    height NUMERIC(4,1) NOT NULL, -- in cm
+    weight NUMERIC(4,1) CHECK (weight >= 0) NOT NULL, -- in kg
+    height NUMERIC(4,1) CHECK (height >= 0) NOT NULL, -- in cm
     gender GENDER NOT NULL, 
     goal GOAL NOT NULL,
     activity_level ACTIVITY_LEVEL NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE entries (
     fat INTEGER CHECK (fat >= 0) NOT NULL,
     carbs INTEGER CHECK (carbs >= 0) NOT NULL,
     serving_size VARCHAR(25) NOT NULL,
-    num_servings NUMERIC(7,3) NOT NULL,
+    num_servings NUMERIC(7,3) CHECK (num_servings >= 0) NOT NULL,
     time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP, 
     user_id INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
