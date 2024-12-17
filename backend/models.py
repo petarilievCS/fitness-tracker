@@ -14,8 +14,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Helper Functions
+def positive_check(column_name):
+    return db.CheckConstraint(f"{column_name} >= 0", name=f"{column_name}_check")
+
 # Enums
-gender_enum = ENUM('MALE', 'FEMALE', name='gender', create_type=False)
+gender_enum = ENUM('Male', 'Female', name='gender', create_type=False)
 activity_level_enum = ENUM('Sedentary', 'Lightly Active', 'Moderately Active', 'Very Active', 'Super Active', name='activity_level', create_type=False)
 goal_enum = ENUM('Cut', 'Maintain', 'Bulk', name='goal', create_type=False)
 
@@ -34,8 +38,8 @@ class User(db.Model):
     password_hash = db.Column(db.Text, nullable=False)
 
     __table_args__ = (
-        db.CheckConstraint('weight >= 0', name='weight_check'),
-        db.CheckConstraint('height >= 0', name='height_check'),
+        positive_check('weight'),
+        positive_check('height'),
         db.CheckConstraint('email ~* \'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$\'', name='email_check'),
     )
 
@@ -52,9 +56,9 @@ class Entry(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     __table_args__ = (
-        db.CheckConstraint('calories >= 0', name='calories_check'),
-        db.CheckConstraint('protein >= 0', name='protein_check'),
-        db.CheckConstraint('fat >= 0', name='fat_check'),
-        db.CheckConstraint('carbs >= 0', name='carbs_check'),
+        positive_check('calories'),
+        positive_check('protein'),
+        positive_check('fat'),
+        positive_check('carbs'),
         db.CheckConstraint('num_servings >= 0', name='num_servings_check'),
     )
