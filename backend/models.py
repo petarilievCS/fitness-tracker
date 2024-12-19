@@ -1,15 +1,18 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import ENUM
 
 app = Flask(__name__)
 
-# Database Configuration
-DB_IP = '35.238.16.183'
+# Database Variables
+DB_USER = 'postgres'
+DB_PASSWORD = '020402'
 DB_NAME = 'postgres'
+DB_HOST = '35.238.16.183'
+
+# Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{DB_IP}/{DB_NAME}"
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:5432/{DB_NAME}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -25,6 +28,7 @@ goal_enum = ENUM('Cut', 'Maintain', 'Bulk', name='goal', create_type=False)
 
 # User Model
 class User(db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
@@ -45,6 +49,7 @@ class User(db.Model):
 
 # Entry Model
 class Entry(db.Model):
+    __tablename__ = 'entries'
     id = db.Column(db.Integer, primary_key=True)
     calories = db.Column(db.Integer, nullable=False)
     protein = db.Column(db.Integer, nullable=False)

@@ -1,3 +1,4 @@
+cloud-sql-python-connector
 flask
 flask_sqlalchemy
 flask_marshmallow

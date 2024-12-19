@@ -1,40 +1,30 @@
-import os
-from flask import Flask
+from models import app, db, User, Entry
+from schema import user_schema, entry_schema
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
-app = Flask(__name__)
-
-# Database Configuration
-DB_IP = '35.238.16.183'
-DB_NAME = 'postgres'
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}@{DB_IP}/{DB_NAME}"
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-class User(db.Model)
-
-@app.route('/', methods=['GET'])
+# Root Route
+@app.route('/')
 def hello():
-    return 'Welcome to the Flask API!'
+    return "Hello"
 
-@app.route('/user', methods=['GET'])
-def get_user():
-    pass
+@app.route('/test')
+def test():
+    users = User.query.all()
+    return {user.id: user.first_name for user in users}
 
-@app.route('/user', methods=['POST'])
-def create_user():
-    pass
+@app.route('/users', methods=['GET'])
+def get_users():
+    # Query all users
+    users = User.query.all()
 
-@app.route('/user', methods=['PUT'])
-def update_user():
-    pass
+    # Serialize user data
+    result = user_schema.dump(users, many=True)
 
-@app.route('/user', methods=['DELETE'])
-def delete_user():
-    pass
+    # Return JSON response
+    return jsonify(result), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True)
