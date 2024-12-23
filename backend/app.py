@@ -3,11 +3,26 @@ from schema import user_schema, entry_schema
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
+import re
 
 # Root Route
 @app.route('/')
 def hello():
     return "Hello"
+
+# Create a new user 
+
+# Delete a user
+
+# Create a new entry 
+
+# Update an entry 
+
+# Delete an entry
+
+# Get all entries for a user & date 
+
+# Get user by email
 
 # Get all users
 @app.route('/users', methods=['GET'])
@@ -28,6 +43,26 @@ def get_user(id):
     user = User.query.get(id)
 
     # Serialize user data
+    result = user_schema.dump(user)
+
+    # Return JSON response
+    return jsonify(result), 200
+
+# Get user by email
+@app.route('/user/<string:email>', methods=['GET'])
+def get_user_by_email(email):
+    # Check if email is valid
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return jsonify({"error": "Invalid email"}), 400
+
+    # Query user by email
+    user = User.query.filter_by(email=email).first()
+
+    # Check if user exists
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Serialize data
     result = user_schema.dump(user)
 
     # Return JSON response
