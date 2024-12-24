@@ -26,7 +26,7 @@ class EntrySchema(Schema):
     carbs = fields.Integer(required=True, validate=validate.Range(min=0))
     serving_size = fields.Str(required=True, validate=validate.Length(min=1, max=25))
     num_servings = fields.Decimal(as_string=True, places=3, required=True, validate=validate.Range(min=0))
-    time = fields.DateTime(dump_only=True)
+    time = fields.DateTime(required=True)
     user_id = fields.Integer(required=True)
 
 # Instantiate Schemas

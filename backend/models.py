@@ -58,7 +58,7 @@ class Entry(db.Model):
     serving_size = db.Column(db.String(25), nullable=False)
     num_servings = db.Column(db.Numeric(precision=4, scale=3), nullable=False)
     time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
     __table_args__ = (
         positive_check('calories'),
