@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from models import app, db, User, Entry
 from schema import user_schema, entry_schema
 from flask import Flask, request, jsonify
@@ -10,10 +11,6 @@ import re
 @app.route('/')
 def hello():
     return "Hello"
-
-# Get all entries for a user & date 
-
-# Get user by email
 
 # Get all users
 @app.route('/users', methods=['GET'])
@@ -98,6 +95,31 @@ def create_user():
         return jsonify({"error": e.messages}), 400
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
+    
+# Update a user
+@app.route('/user/<int:id>', methods=['PUT'])
+def update_user(id):
+    # Query user by id
+    user = User.query.get(id)
+
+    # Check if user exists
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+
+    try:
+        # Serialize data
+        user_data = user_schema.load(request.get_json(), partial=True)
+
+        # Update attributes
+        for key, value in user_data.items():
+            setattr(user, key, value)
+
+        db.session.commit()
+        return jsonify(user_schema.dump(user)), 200
+    except ValidationError as e:
+        return jsonify({"error": e.messages}), 400
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
 
 # Delete a user
 @app.route('/user/<int:id>', methods=['DELETE'])
@@ -131,18 +153,47 @@ def get_entry(id):
     # Return JSON response
     return jsonify(result), 200
 
+# TODO: Validate date helper
+
 # Get all entries
 @app.route('/entries', methods=['GET'])
 def get_entries():
+    # Get query parameters
+    user_id = request.args.get('user_id')
+    if user_id != None and not user_id.isdigit():
+        return jsonify({"error": "user_id must be an integer"})
+    
+    start_time_str = request.args.get('start_time')
+    start_time = None
+    if start_time_str != None:
+        for format in ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]:
+            try:
+                start_time = datetime.strptime(start_time_str, format)
+                break
+            except ValueError:
+                continue
+        if not start_time:
+            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS."}), 400
+        
+    end_time = request.args.get('end_time')
+
+    query = Entry.query
+
+    if user_id:
+        query = query.filter_by(user_id=user_id)
+    if start_time:
+        query = query.filter(Entry.time >= start_time)
+    if end_time:
+        query = query.filter(Entry.time <= end_time)
+
     # Query all entries
-    entries = Entry.query.all()
+    entries = query.all()
 
     # Serialize entry data
     result = entry_schema.dump(entries, many=True)
 
     # Return JSON response
     return jsonify(result), 200
-
 
 # Create a new entry 
 @app.route('/entry', methods=['POST'])
@@ -191,7 +242,9 @@ def update_entry(id):
         # Serialize data
         entry_data = entry_schema.load(request.get_json(), partial=True)
 
-        # TODO: Ensure user_id is not changed
+        # Ensure user_id is not changed
+        if 'user_id' in entry_data:
+            return jsonify({"error": "user_id can not be changed"}), 400
 
         # Update attributes
         for key, value in entry_data.items():
