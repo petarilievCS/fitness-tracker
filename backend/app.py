@@ -153,7 +153,17 @@ def get_entry(id):
     # Return JSON response
     return jsonify(result), 200
 
-# TODO: Validate date helper
+# Validate time format
+def validate_time(time_str):
+    time = None
+    for format in ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]:
+        try:
+            time = datetime.strptime(time_str, format)
+            return time
+        except ValueError:
+            continue
+    if not time:
+        return None
 
 # Get all entries
 @app.route('/entries', methods=['GET'])
@@ -163,19 +173,21 @@ def get_entries():
     if user_id != None and not user_id.isdigit():
         return jsonify({"error": "user_id must be an integer"})
     
+    # Validate start_time
     start_time_str = request.args.get('start_time')
     start_time = None
     if start_time_str != None:
-        for format in ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]:
-            try:
-                start_time = datetime.strptime(start_time_str, format)
-                break
-            except ValueError:
-                continue
+        start_time = validate_time(start_time_str)
         if not start_time:
-            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS."}), 400
+            return jsonify({"error": "Invalid start_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"})
         
-    end_time = request.args.get('end_time')
+    # Validate end_time 
+    end_time_str = request.args.get('end_time')
+    end_time = None
+    if end_time_str != None:
+        end_time = validate_time(end_time_str)
+        if not end_time:
+            return jsonify({"error": "Invalid end_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"})
 
     query = Entry.query
 
