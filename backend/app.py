@@ -188,15 +188,33 @@ def get_entries():
         end_time = validate_time(end_time_str)
         if not end_time:
             return jsonify({"error": "Invalid end_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"})
+        
+    # Sorting parameter
+    sort_by = request.args.get('sort_by', 'time')
+    order = request.args.get('order', 'asc')
+
+    # Validate sort by parameter
+    if sort_by != 'time':
+        return jsonify({"error": "Invalid sort_by parameter"}), 400
+    if order not in {'asc', 'desc'}:
+        return jsonify({"error": "Invalid order parameter"}), 400
 
     query = Entry.query
 
+    # Apply filters
     if user_id:
         query = query.filter_by(user_id=user_id)
     if start_time:
         query = query.filter(Entry.time >= start_time)
     if end_time:
         query = query.filter(Entry.time <= end_time)
+
+    # Apply sorting
+    column = getattr(Entry, sort_by)
+    if order == 'desc':
+        query = query.order_by(column.desc())
+    else:
+        query = query.order_by(column.asc())
 
     # Query all entries
     entries = query.all()
