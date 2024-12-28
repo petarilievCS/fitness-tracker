@@ -2,4 +2,4 @@ cloud-sql-python-connector
 flask
 flask_sqlalchemy
 flask_marshmallow
-psycopg2
+psycopg2-binary
