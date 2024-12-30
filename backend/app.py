@@ -8,6 +8,7 @@ from schema import user_schema, entry_schema
 
 # Helper methods
 
+
 # Validate time format
 def validate_time(time_str):
     time = None
@@ -20,13 +21,15 @@ def validate_time(time_str):
     if not time:
         return None
 
+
 # Root Route
-@app.route('/')
+@app.route("/")
 def hello():
     return "Hello"
 
+
 # Get all users
-@app.route('/users', methods=['GET'])
+@app.route("/users", methods=["GET"])
 def get_users():
     # Query all users
     users = User.query.all()
@@ -37,10 +40,11 @@ def get_users():
     # Return JSON response
     return jsonify(result), 200
 
+
 # Get a single user
-@app.route('/user/<int:id>', methods=['GET'])
+@app.route("/user/<int:id>", methods=["GET"])
 def get_user(id):
-    # Query user by id 
+    # Query user by id
     user = User.query.get(id)
 
     # Check if user exists
@@ -53,8 +57,9 @@ def get_user(id):
     # Return JSON response
     return jsonify(result), 200
 
+
 # Get user by email
-@app.route('/user/<string:email>', methods=['GET'])
+@app.route("/user/<string:email>", methods=["GET"])
 def get_user_by_email(email):
     # Check if email is valid
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
@@ -66,15 +71,16 @@ def get_user_by_email(email):
     # Check if user exists
     if user == None:
         return jsonify({"error": "User not found"}), 404
-    
+
     # Serialize data
     result = user_schema.dump(user)
 
     # Return JSON response
     return jsonify(result), 200
 
-# Create a new user 
-@app.route('/user', methods=['POST'])
+
+# Create a new user
+@app.route("/user", methods=["POST"])
 def create_user():
     try:
         # Parse and validate data
@@ -82,21 +88,21 @@ def create_user():
         user_data = user_schema.load(data)
 
         # Check if email exists
-        if User.query.filter_by(email=user_data['email']).first() != None:
+        if User.query.filter_by(email=user_data["email"]).first() != None:
             return jsonify({"error": "Email already exists"}), 400
 
         # Create new user
         new_user = User(
-            first_name=user_data['first_name'],
-            last_name=user_data['last_name'],
-            birth_date=user_data['birth_date'],
-            weight=user_data['weight'],
-            height=user_data['height'],
-            gender=user_data['gender'],
-            activity_level=user_data['activity_level'],
-            goal=user_data['goal'],
-            email=user_data['email'],
-            password_hash=user_data['password_hash']
+            first_name=user_data["first_name"],
+            last_name=user_data["last_name"],
+            birth_date=user_data["birth_date"],
+            weight=user_data["weight"],
+            height=user_data["height"],
+            gender=user_data["gender"],
+            activity_level=user_data["activity_level"],
+            goal=user_data["goal"],
+            email=user_data["email"],
+            password_hash=user_data["password_hash"],
         )
 
         # Add user to database
@@ -108,9 +114,10 @@ def create_user():
         return jsonify({"error": e.messages}), 400
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
-    
+
+
 # Update a user
-@app.route('/user/<int:id>', methods=['PUT'])
+@app.route("/user/<int:id>", methods=["PUT"])
 def update_user(id):
     # Query user by id
     user = User.query.get(id)
@@ -134,8 +141,9 @@ def update_user(id):
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
 
+
 # Delete a user
-@app.route('/user/<int:id>', methods=['DELETE'])
+@app.route("/user/<int:id>", methods=["DELETE"])
 def delete_user(id):
     # Query user by id
     user = User.query.get(id)
@@ -150,8 +158,9 @@ def delete_user(id):
 
     return jsonify({"message": "User deleted"}), 200
 
+
 # Get a single entry
-@app.route('/entry/<int:id>', methods=['GET'])
+@app.route("/entry/<int:id>", methods=["GET"])
 def get_entry(id):
     # Query entry by id
     entry = Entry.query.get(id)
@@ -166,38 +175,47 @@ def get_entry(id):
     # Return JSON response
     return jsonify(result), 200
 
+
 # Get all entries
-@app.route('/entries', methods=['GET'])
+@app.route("/entries", methods=["GET"])
 def get_entries():
     # Get query parameters
-    user_id = request.args.get('user_id')
+    user_id = request.args.get("user_id")
     if user_id != None and not user_id.isdigit():
         return jsonify({"error": "user_id must be an integer"})
-    
+
     # Validate start_time
-    start_time_str = request.args.get('start_time')
+    start_time_str = request.args.get("start_time")
     start_time = None
     if start_time_str != None:
         start_time = validate_time(start_time_str)
         if not start_time:
-            return jsonify({"error": "Invalid start_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"})
-        
-    # Validate end_time 
-    end_time_str = request.args.get('end_time')
+            return jsonify(
+                {
+                    "error": "Invalid start_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"
+                }
+            )
+
+    # Validate end_time
+    end_time_str = request.args.get("end_time")
     end_time = None
     if end_time_str != None:
         end_time = validate_time(end_time_str)
         if not end_time:
-            return jsonify({"error": "Invalid end_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"})
-        
+            return jsonify(
+                {
+                    "error": "Invalid end_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"
+                }
+            )
+
     # Sorting parameter
-    sort_by = request.args.get('sort_by', 'time')
-    order = request.args.get('order', 'asc')
+    sort_by = request.args.get("sort_by", "time")
+    order = request.args.get("order", "asc")
 
     # Validate sort by parameter
-    if sort_by != 'time':
+    if sort_by != "time":
         return jsonify({"error": "Invalid sort_by parameter"}), 400
-    if order not in {'asc', 'desc'}:
+    if order not in {"asc", "desc"}:
         return jsonify({"error": "Invalid order parameter"}), 400
 
     query = Entry.query
@@ -212,7 +230,7 @@ def get_entries():
 
     # Apply sorting
     column = getattr(Entry, sort_by)
-    if order == 'desc':
+    if order == "desc":
         query = query.order_by(column.desc())
     else:
         query = query.order_by(column.asc())
@@ -226,8 +244,9 @@ def get_entries():
     # Return JSON response
     return jsonify(result), 200
 
-# Create a new entry 
-@app.route('/entry', methods=['POST'])
+
+# Create a new entry
+@app.route("/entry", methods=["POST"])
 def create_entry():
     try:
         # Parse and validate data
@@ -235,19 +254,19 @@ def create_entry():
         entry_data = entry_schema.load(data)
 
         # Check if user exists
-        if User.query.get(entry_data['user_id']) == None:
+        if User.query.get(entry_data["user_id"]) == None:
             return jsonify({"error": "User not found"}), 404
 
         # Create new entry
         new_entry = Entry(
-            user_id=entry_data['user_id'],
-            calories=entry_data['calories'],
-            protein=entry_data['protein'],
-            fat=entry_data['fat'],
-            carbs=entry_data['carbs'],
-            serving_size=entry_data['serving_size'],
-            num_servings=entry_data['num_servings'],
-            time=entry_data['time']
+            user_id=entry_data["user_id"],
+            calories=entry_data["calories"],
+            protein=entry_data["protein"],
+            fat=entry_data["fat"],
+            carbs=entry_data["carbs"],
+            serving_size=entry_data["serving_size"],
+            num_servings=entry_data["num_servings"],
+            time=entry_data["time"],
         )
 
         # Add entry to database
@@ -261,20 +280,21 @@ def create_entry():
         print(str(e))
         return jsonify({"error": "Internal server error"}), 500
 
-# Update an entry 
-@app.route('/entry/<int:id>', methods=['PUT'])
+
+# Update an entry
+@app.route("/entry/<int:id>", methods=["PUT"])
 def update_entry(id):
     # Query entry by id
     entry = Entry.query.get(id)
     if entry == None:
         return jsonify({"error": "Entry not found"}), 404
-    
+
     try:
         # Serialize data
         entry_data = entry_schema.load(request.get_json(), partial=True)
 
         # Ensure user_id is not changed
-        if 'user_id' in entry_data:
+        if "user_id" in entry_data:
             return jsonify({"error": "user_id can not be changed"}), 400
 
         # Update attributes
@@ -288,12 +308,13 @@ def update_entry(id):
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
 
+
 # Delete an entry
-@app.route('/entry/<int:id>', methods=['DELETE'])
+@app.route("/entry/<int:id>", methods=["DELETE"])
 def delete_entry(id):
     # Query entry by id
     entry = Entry.query.get(id)
-    
+
     # Check if entry exists
     if entry == None:
         return jsonify({"error": "Entry not found"}), 404
@@ -304,5 +325,6 @@ def delete_entry(id):
 
     return jsonify({"message": "Entry deleted"}), 200
 
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True)
