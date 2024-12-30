@@ -1,11 +1,24 @@
-from datetime import date, datetime
-from models import app, db, User, Entry
-from schema import user_schema, entry_schema
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
-from marshmallow import ValidationError
 import re
+
+from datetime import date, datetime
+from flask import request, jsonify
+from models import app, db, User, Entry
+from marshmallow import ValidationError
+from schema import user_schema, entry_schema
+
+# Helper methods
+
+# Validate time format
+def validate_time(time_str):
+    time = None
+    for format in ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]:
+        try:
+            time = datetime.strptime(time_str, format)
+            return time
+        except ValueError:
+            continue
+    if not time:
+        return None
 
 # Root Route
 @app.route('/')
@@ -153,18 +166,6 @@ def get_entry(id):
     # Return JSON response
     return jsonify(result), 200
 
-# Validate time format
-def validate_time(time_str):
-    time = None
-    for format in ["%Y-%m-%d", "%Y-%m-%dT%H:%M:%S"]:
-        try:
-            time = datetime.strptime(time_str, format)
-            return time
-        except ValueError:
-            continue
-    if not time:
-        return None
-
 # Get all entries
 @app.route('/entries', methods=['GET'])
 def get_entries():
@@ -304,4 +305,4 @@ def delete_entry(id):
     return jsonify({"message": "Entry deleted"}), 200
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)

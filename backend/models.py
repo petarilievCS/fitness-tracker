@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import ENUM
@@ -5,10 +7,10 @@ from sqlalchemy.dialects.postgresql import ENUM
 app = Flask(__name__)
 
 # Database Variables
-DB_USER = 'postgres'
-DB_PASSWORD = '020402'
-DB_NAME = 'postgres'
-DB_HOST = '35.238.16.183'
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_NAME = os.getenv('DB_NAME')
+DB_HOST = os.getenv('DB_HOST')
 
 # Database Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = (
