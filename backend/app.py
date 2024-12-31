@@ -326,5 +326,31 @@ def delete_entry(id):
     return jsonify({"message": "Entry deleted"}), 200
 
 
+# Authentication Routes
+
+# Login Route
+@app.route('/login', methods=['POST'])
+def login():
+    # Parse data
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password_hash')
+
+    # Validate input
+    if email == None or password == None:
+        return jsonify({"error": "Please specify email and password"}), 400
+    
+    # Lookup user
+    user = User.query.filter_by(email=email).first()
+    if user == None:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Authenticate user
+    if user.password_hash != password:
+        return jsonify({'error': 'Incorrect password'}), 401
+    
+    return jsonify(user_schema.dump(user)), 200
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
