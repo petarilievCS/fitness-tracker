@@ -8,8 +8,26 @@
 import SwiftUI
 
 struct LoginView: View {
+    @State private var viewModel: LoginViewModel = LoginViewModel()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .center, spacing: 20) {
+            CapsuleTextField(placeholder: "Email", text: $viewModel.email)
+            CapsuleTextField(placeholder: "Password", text: $viewModel.password, isSecure: true)
+            
+            Button(action: {
+                viewModel.loginButtonPressed()
+            }) {
+                Text("Log In")
+                    .fontWeight(.black)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(.blue)
+                    .clipShape(.capsule)
+            }
+        }
+        .padding()
     }
 }
 
