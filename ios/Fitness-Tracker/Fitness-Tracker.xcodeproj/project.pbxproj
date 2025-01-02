@@ -35,16 +35,6 @@
 			path = "Fitness-Tracker";
 			sourceTree = "<group>";
 		};
-		E67998C12D23E4540015ECEE /* Fitness-TrackerTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Fitness-TrackerTests";
-			sourceTree = "<group>";
-		};
-		E67998CB2D23E4540015ECEE /* Fitness-TrackerUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Fitness-TrackerUITests";
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,8 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				E67998AE2D23E4530015ECEE /* Fitness-Tracker */,
-				E67998C12D23E4540015ECEE /* Fitness-TrackerTests */,
-				E67998CB2D23E4540015ECEE /* Fitness-TrackerUITests */,
 				E67998AD2D23E4530015ECEE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -130,9 +118,6 @@
 			dependencies = (
 				E67998C02D23E4540015ECEE /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				E67998C12D23E4540015ECEE /* Fitness-TrackerTests */,
-			);
 			name = "Fitness-TrackerTests";
 			packageProductDependencies = (
 			);
@@ -152,9 +137,6 @@
 			);
 			dependencies = (
 				E67998CA2D23E4540015ECEE /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				E67998CB2D23E4540015ECEE /* Fitness-TrackerUITests */,
 			);
 			name = "Fitness-TrackerUITests";
 			packageProductDependencies = (
@@ -396,6 +378,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Fitness-Tracker/Preview Content\"";
+				DEVELOPMENT_TEAM = 59DXMVY9R4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -424,6 +407,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Fitness-Tracker/Preview Content\"";
+				DEVELOPMENT_TEAM = 59DXMVY9R4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

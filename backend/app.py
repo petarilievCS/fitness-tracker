@@ -1,6 +1,6 @@
 import re
 
-from datetime import date, datetime
+from datetime import datetime, time
 from flask import request, jsonify
 from models import app, db, User, Entry
 from marshmallow import ValidationError
@@ -350,6 +350,38 @@ def login():
         return jsonify({'error': 'Incorrect password'}), 401
     
     return jsonify(user_schema.dump(user)), 200
+
+
+# Entry Page Route
+@app.route('/info/<int:user_id>', methods=['GET'])
+def info(user_id):
+    # Validate user
+    user = User.query.filter(User.id==user_id).first()
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Deserialize data
+    data = user_schema.dump(user)
+
+    # Get start and end of today
+    today = datetime.now().date()
+    start_of_today = datetime.combine(today, time.min)
+    end_of_today = datetime.combine(today, time.max)
+
+    # Query entries
+    entries_query = Entry.query.filter(Entry.user_id == user_id, Entry.time >= start_of_today, Entry.time <= end_of_today)
+    entries_query = entries_query.order_by(Entry.time.desc())
+    entries = entries_query.all()
+    entries_data = entry_schema.dump(entries, many=True)
+    data["entries"] = entries_data
+
+    # Calculate macros
+    data["today_calories"] = sum(entry.calories for entry in entries)
+    data["today_protein"] = sum(entry.protein for entry in entries)
+    data["today_fat"] = sum(entry.fat for entry in entries)
+    data["today_carbs"] = sum(entry.carbs for entry in entries)
+
+    return jsonify(data), 200    
 
 
 if __name__ == "__main__":
