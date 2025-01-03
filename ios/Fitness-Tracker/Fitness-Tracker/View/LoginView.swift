@@ -26,6 +26,11 @@ struct LoginView: View {
                     .background(.blue)
                     .clipShape(.capsule)
             }
+            .alert("Invalid login credentials", isPresented: $viewModel.showAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Please enter valid email and password.")
+            }
         }
         .padding()
     }

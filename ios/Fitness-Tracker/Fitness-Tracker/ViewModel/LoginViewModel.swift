@@ -11,8 +11,19 @@ import SwiftUI
 class LoginViewModel {
     var email: String = ""
     var password: String = ""
+    var showAlert: Bool = false
     
     func loginButtonPressed() {
+        // Validate user input
+        if email == "" || password == "" {
+            showAlert.toggle()
+            return
+        }
+        
+        // TODO: Make API Request
+        
+        // TODO: Handle result
+        
         guard let url = URL(string: "https://flask-api-122291004318.us-central1.run.app/users") else {
             print("Invalid URL")
             return
