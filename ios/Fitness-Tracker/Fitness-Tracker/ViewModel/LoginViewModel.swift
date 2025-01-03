@@ -29,23 +29,16 @@ class LoginViewModel {
                 return
             }
             
-            print(String(data: data, encoding: .utf8))
+            let decoder = JSONDecoder()
+            
+            do {
+                let users = try decoder.decode([User].self, from: data)
+                print(users)
+            } catch {
+                print("Error: \(error)")
+            }
+            
         }
         task.resume()
-
-//
-//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-//            if let error {
-//                print("Error: \(error)")
-//                return
-//            }
-//            
-//            guard let data else {
-//                print("No data")
-//                return
-//            }
-//            
-//            print("Works")
-//        }
     }
 }
