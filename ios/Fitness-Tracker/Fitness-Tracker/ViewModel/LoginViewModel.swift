@@ -13,7 +13,7 @@ class LoginViewModel {
     var password: String = ""
     
     func loginButtonPressed() {
-        guard let url = URL(string: "https://flask-api-122291004318.us-central1.run.app/") else {
+        guard let url = URL(string: "https://flask-api-122291004318.us-central1.run.app/users") else {
             print("Invalid URL")
             return
         }
@@ -25,17 +25,27 @@ class LoginViewModel {
             }
             
             guard let data else {
-                print("No data")
+                print("Data unavailable")
                 return
             }
             
-            let decoder = JSONDecoder()
-            
-            do {
-                let response = try decoder.decode(Response.self, from: data)
-            } catch {
-                print("Decoding error: \(error.localizedDescription)")
-            }
+            print(String(data: data, encoding: .utf8))
         }
+        task.resume()
+
+//
+//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let error {
+//                print("Error: \(error)")
+//                return
+//            }
+//            
+//            guard let data else {
+//                print("No data")
+//                return
+//            }
+//            
+//            print("Works")
+//        }
     }
 }
