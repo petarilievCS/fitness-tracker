@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct HomeView: View {
+   @State private var viewModel = HomeViewModel()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        RingProgressView(
+            progress: viewModel.progress,
+            lineWidth: 50.0
+        )
+        .padding(.horizontal, 50)
+        Button("Increase progress") {
+            viewModel.progress += 0.1
+        }
     }
 }
 
