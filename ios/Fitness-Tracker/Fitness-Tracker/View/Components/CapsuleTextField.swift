@@ -26,6 +26,7 @@ struct CapsuleTextField: View {
 struct CapsuleTextFieldStyle: ViewModifier {
     func body(content: Content) -> some View {
         content
+            .textInputAutocapitalization(.never)
             .padding()
             .background(.gray.opacity(0.2))
             .clipShape(.capsule)

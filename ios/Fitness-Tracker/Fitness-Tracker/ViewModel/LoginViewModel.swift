@@ -21,35 +21,42 @@ class LoginViewModel {
         }
         
         // TODO: Make API Request
+        Task {
+            do {
+                try await DataService().loginUser(email: email, password: password)
+            } catch {
+                print("Error: \(error.localizedDescription)")
+            }
+        }
         
         // TODO: Handle result
         
-        guard let url = URL(string: "https://flask-api-122291004318.us-central1.run.app/users") else {
-            print("Invalid URL")
-            return
-        }
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error {
-                print("Error: \(error)")
-                return
-            }
-            
-            guard let data else {
-                print("Data unavailable")
-                return
-            }
-            
-            let decoder = JSONDecoder()
-            
-            do {
-                let users = try decoder.decode([User].self, from: data)
-                print(users)
-            } catch {
-                print("Error: \(error)")
-            }
-            
-        }
-        task.resume()
+//        guard let url = URL(string: "https://flask-api-122291004318.us-central1.run.app/users") else {
+//            print("Invalid URL")
+//            return
+//        }
+//        
+//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let error {
+//                print("Error: \(error)")
+//                return
+//            }
+//            
+//            guard let data else {
+//                print("Data unavailable")
+//                return
+//            }
+//            
+//            let decoder = JSONDecoder()
+//            
+//            do {
+//                let users = try decoder.decode([User].self, from: data)
+//                print(users)
+//            } catch {
+//                print("Error: \(error)")
+//            }
+//            
+//        }
+//        task.resume()
     }
 }
