@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("loggedIn") private var loggedIn: Bool = false
+    @AppStorage("userId") private var userId: Int?
     
     var body: some View {
-        if loggedIn {
+        if userId != nil {
             HomeView()
         } else {
             LoginView()

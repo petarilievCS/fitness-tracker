@@ -7,11 +7,17 @@
 
 import Foundation
 
+enum LoginError: Error {
+    case serverError(String)
+    case decodingError(String)
+    case unknownError
+}
+
 struct DataService {
     
     private let baseUrlString: String = "https://flask-api-122291004318.us-central1.run.app"
     
-    func loginUser(email: String, password: String) async throws {
+    func loginUser(email: String, password: String) async throws -> User {
         // 1: Define URL
         guard let url = URL(string: "\(baseUrlString)/login") else {
             throw URLError(.badURL)
@@ -31,13 +37,26 @@ struct DataService {
         let (data, response) = try await URLSession.shared.data(for: request)
         
         // 5: Handle response
-        guard let httpResonse = response as? HTTPURLResponse, httpResonse.statusCode == 200 else {
+        guard let httpResonse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
-        
-        // 6: Decode response
         let decoder = JSONDecoder()
-        let user = try decoder.decode(User.self, from: data)
-        print(user)
+        
+        // 6: Handle response
+        switch httpResonse.statusCode {
+        case 200:
+            let decoder = JSONDecoder()
+            let user = try decoder.decode(User.self, from: data)
+            return user
+        case 400..<500:
+            print("Client Side Error")
+            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw LoginError.serverError(errorResponse.error)
+            } else {
+                throw LoginError.decodingError("Error: Unable to decode server error.")
+            }
+        default:
+            throw LoginError.unknownError
+        }
     }
 }

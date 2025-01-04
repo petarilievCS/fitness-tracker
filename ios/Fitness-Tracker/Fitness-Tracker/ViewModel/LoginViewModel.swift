@@ -9,54 +9,37 @@ import SwiftUI
 
 @Observable
 class LoginViewModel {
+    let userDefaults = UserDefaults.standard
+    let dataService = DataService()
+    
     var email: String = ""
     var password: String = ""
     var showAlert: Bool = false
+    var alertTitle: String = ""
+    var alertMessage: String = ""
     
     func loginButtonPressed() {
         // Validate user input
         if email == "" || password == "" {
+            alertTitle = "Invalid login credentials"
+            alertMessage = "Please enter valid email and password."
             showAlert.toggle()
             return
         }
         
-        // TODO: Make API Request
+        // Make API Request
         Task {
             do {
-                try await DataService().loginUser(email: email, password: password)
+                let user = try await DataService().loginUser(email: email, password: password)
+                alertTitle = "Success"
+                alertMessage = "Successfully logged in."
+                showAlert.toggle()
+                userDefaults.set(user.id, forKey: "userId")
             } catch {
-                print("Error: \(error.localizedDescription)")
+                alertTitle = "Error"
+                alertMessage = "\(error)"
+                showAlert.toggle()
             }
         }
-        
-        // TODO: Handle result
-        
-//        guard let url = URL(string: "https://flask-api-122291004318.us-central1.run.app/users") else {
-//            print("Invalid URL")
-//            return
-//        }
-//        
-//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-//            if let error {
-//                print("Error: \(error)")
-//                return
-//            }
-//            
-//            guard let data else {
-//                print("Data unavailable")
-//                return
-//            }
-//            
-//            let decoder = JSONDecoder()
-//            
-//            do {
-//                let users = try decoder.decode([User].self, from: data)
-//                print(users)
-//            } catch {
-//                print("Error: \(error)")
-//            }
-//            
-//        }
-//        task.resume()
     }
 }
