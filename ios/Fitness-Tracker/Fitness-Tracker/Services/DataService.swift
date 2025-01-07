@@ -59,4 +59,6 @@ struct DataService {
             throw LoginError.unknownError
         }
     }
+    
+    func getEntries(for user: Int) -> [Entr]
 }
