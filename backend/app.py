@@ -361,7 +361,10 @@ def info(user_id):
         return jsonify({"error": "User not found"}), 404
     
     # Deserialize data
-    data = user_schema.dump(user)
+    user_data = user_schema.dump(user)
+
+    # Remove unnecessary fields
+    unnecessary_fields = ['email', 'birth_date', 'first_name', 'last_name', 'gender', 'goal', 'height', 'activity_level']
 
     # Get start and end of today
     today = datetime.now().date()
@@ -369,6 +372,7 @@ def info(user_id):
     end_of_today = datetime.combine(today, time.max)
 
     # Query entries
+    data = {}
     entries_query = Entry.query.filter(Entry.user_id == user_id, Entry.time >= start_of_today, Entry.time <= end_of_today)
     entries_query = entries_query.order_by(Entry.time.desc())
     entries = entries_query.all()

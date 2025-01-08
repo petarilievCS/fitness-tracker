@@ -93,4 +93,8 @@ struct DataService {
             throw LoginError.unknownError
         }
     }
+    
+    func getInfo(for user: Int) async throws -> [UserInfo] {
+        
+    }
 }

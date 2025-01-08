@@ -48,15 +48,6 @@ class HomeViewModel {
         self.carbsGoal = carbsGoal
         self.fats = fats
         self.fatsGoal = fatsGoal
-        
-        Task {
-            do {
-                let entries = try await dataService.getEntries(for: 1)
-                print(entries)
-            } catch {
-                print("Error: \(error)")
-            }
-        }
     }
     
     // Mock view model
