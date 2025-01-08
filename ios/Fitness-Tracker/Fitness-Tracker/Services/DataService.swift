@@ -60,5 +60,37 @@ struct DataService {
         }
     }
     
-    func getEntries(for user: Int) -> [Entr]
+    func getEntries(for user: Int) async throws -> [Entry] {
+        // 1: Define URL
+        guard let url = URL(string: "\(baseUrlString)/entries?user_id=\(user)") else {
+            throw URLError(.badURL)
+        }
+
+        // 2: Send request via URLSession
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // 3: Handle response
+        guard let httpResonse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        let decoder = JSONDecoder()
+        
+        switch httpResonse.statusCode {
+        case 200:
+            let decoder = JSONDecoder()
+            let user = try decoder.decode([Entry].self, from: data)
+            return user
+        case 400..<500:
+            print("Client Side Error")
+            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw LoginError.serverError(errorResponse.error)
+            } else {
+                throw LoginError.decodingError("Error: Unable to decode server error.")
+            }
+        default:
+            throw LoginError.unknownError
+        }
+    }
 }

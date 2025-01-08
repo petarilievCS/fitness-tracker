@@ -9,6 +9,8 @@ import SwiftUI
 
 @Observable
 class HomeViewModel {
+    private let dataService = DataService()
+    
     // Macro variables
     var calories: Double = 0.0
     var calorieGoal: Double = 0.0
@@ -46,6 +48,15 @@ class HomeViewModel {
         self.carbsGoal = carbsGoal
         self.fats = fats
         self.fatsGoal = fatsGoal
+        
+        Task {
+            do {
+                let entries = try await dataService.getEntries(for: 1)
+                print(entries)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
     }
     
     // Mock view model

@@ -43,9 +43,8 @@ struct User: Codable, Identifiable {
         goal = try container.decode(String.self, forKey: .goal)
         
         // Decode birthday from string to date
-        let dateFormatter = APIDateFormatter()
         let birthDateString = try container.decode(String.self, forKey: .birthDate)
-        if let date = dateFormatter.date(from: birthDateString) {
+        if let date = APIDateFormatter.shared.date(from: birthDateString) {
             birthDate = date
         } else {
             throw DecodingError.dataCorruptedError(
