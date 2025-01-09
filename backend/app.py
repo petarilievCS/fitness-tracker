@@ -21,6 +21,14 @@ def validate_time(time_str):
             continue
     if not time:
         return None
+    
+
+# Get user
+def get_user(id):
+    user = User.query.get(id)
+    if user == None:
+        None
+    return user
 
 
 # Root Route
@@ -393,7 +401,7 @@ def info(user_id):
 @app.route('/goals/<int:user_id>', methods=['GET'])
 def goals(user_id):
     # Validate user
-    user = User.query.filter(User.id==user_id).first()
+    user = get_user(user_id)
     if user == None:
         return jsonify({"error": "User not found"}), 404
     
@@ -416,7 +424,37 @@ def goals(user_id):
     }
     return jsonify(goals), 200
 
-# TODO: Returns entires for a user
+
+# Returns entires and total intake for a user
+@app.route('/entries/<int:user_id>', methods=['GET'])
+def entries(user_id):
+    # Validate user
+    user = get_user(user_id)
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Get start and end of today
+    today = datetime.now().date()
+    start_of_today = datetime.combine(today, time.min)
+    end_of_today = datetime.combine(today, time.max)
+
+    # Query entries
+    entries_query = Entry.query.filter(
+        Entry.user_id == user_id, 
+        Entry.time >= start_of_today, 
+        Entry.time <= end_of_today
+        ).order_by(Entry.time.desc())
+    entries = entries_query.all()
+
+    # Create response
+    data = {}
+    data["entries"] = entry_schema.dump(entries, many=True)
+    data["today_calories"] = sum(entry.calories for entry in entries)
+    data["today_protein"] = sum(entry.protein for entry in entries)
+    data["today_fat"] = sum(entry.fat for entry in entries)
+    data["today_carbs"] = sum(entry.carbs for entry in entries)
+
+    return jsonify(data), 200 
 
 
 if __name__ == "__main__":
