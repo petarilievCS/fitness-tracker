@@ -1,10 +1,11 @@
 import re
 
-from datetime import datetime, time
+from datetime import datetime, time, date
 from flask import request, jsonify
 from models import app, db, User, Entry
 from marshmallow import ValidationError
 from schema import user_schema, entry_schema
+from utils import calculate_bmr, apply_activity_level, adjust_for_goal, calculate_macros
 
 # Helper methods
 
@@ -386,6 +387,36 @@ def info(user_id):
     data["today_carbs"] = sum(entry.carbs for entry in entries)
 
     return jsonify(data), 200    
+
+
+# Returns goals for a user
+@app.route('/goals/<int:user_id>', methods=['GET'])
+def goals(user_id):
+    # Validate user
+    user = User.query.filter(User.id==user_id).first()
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Deserialize data
+    user_data = user_schema.dump(user)
+
+    # Calculate calorie goal
+    BMR = calculate_bmr(user)
+    target_calories = apply_activity_level(BMR, user.activity_level)
+    target_calories = adjust_for_goal(target_calories, user.goal)
+
+    # Calculate macors
+    target_protein, target_carbs, target_fats = calculate_macros(target_calories, user.goal)
+
+    goals = {
+        "calories_goal": int(target_calories),
+        "protein_goal": int(target_protein),
+        "carbs_goal": int(target_carbs),
+        "fats_goal": int(target_fats)
+    }
+    return jsonify(goals), 200
+
+# TODO: Returns entires for a user
 
 
 if __name__ == "__main__":
