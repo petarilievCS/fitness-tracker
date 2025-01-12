@@ -109,7 +109,7 @@ def goals(user_id):
 
     # Calculate calorie goal
     BMR = calculate_bmr(user)
-    target_calories = apply_activity_level(BMR, user.activity_level)
+    target_calories = apply_activity_multiplier(BMR, user.activity_level)
     target_calories = adjust_for_goal(target_calories, user.goal)
 
     # Calculate macors
@@ -215,6 +215,7 @@ def create_entry():
         # Create new entry
         new_entry = Entry(
             user_id=entry_data["user_id"],
+            name=entry_data["name"],
             calories=entry_data["calories"],
             protein=entry_data["protein"],
             fat=entry_data["fat"],

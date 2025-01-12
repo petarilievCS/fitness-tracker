@@ -37,6 +37,7 @@ class UserSchema(Schema):
 # Entry Schema
 class EntrySchema(Schema):
     id = fields.Integer(dump_only=True)
+    name = fields.Str(required=True, validate=validate.Length(min=1, max=100))
     calories = fields.Integer(required=True, validate=validate.Range(min=0))
     protein = fields.Integer(required=True, validate=validate.Range(min=0))
     fat = fields.Integer(required=True, validate=validate.Range(min=0))
