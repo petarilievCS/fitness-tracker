@@ -21,6 +21,7 @@ CREATE TABLE users (
 -- Entries
 CREATE TABLE entries (
     id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
     calories INTEGER CHECK (calories >= 0) NOT NULL,
     protein INTEGER CHECK (protein >= 0) NOT NULL,
     fat INTEGER CHECK (fat >= 0) NOT NULL,
