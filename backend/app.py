@@ -5,9 +5,7 @@ from flask import request, jsonify
 from models import app, db, User, Entry
 from marshmallow import ValidationError
 from schema import user_schema, entry_schema
-from utils import calculate_bmr, apply_activity_level, adjust_for_goal, calculate_macros
-
-# Helper methods
+from utils import calculate_bmr, apply_activity_multiplier, adjust_for_goal, calculate_macros
 
 
 # Validate time format
@@ -37,59 +35,32 @@ def hello():
     return "Hello"
 
 
-# Get all users
-@app.route("/users", methods=["GET"])
-def get_users():
-    # Query all users
-    users = User.query.all()
+# Login Route
+@app.route('/login', methods=['POST'])
+def login():
+    # Parse data
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password_hash')
 
-    # Serialize user data
-    result = user_schema.dump(users, many=True)
-
-    # Return JSON response
-    return jsonify(result), 200
-
-
-# Get a single user
-@app.route("/user/<int:id>", methods=["GET"])
-def get_user(id):
-    # Query user by id
-    user = User.query.get(id)
-
-    # Check if user exists
-    if user == None:
-        return jsonify({"error": "User not found"}), 404
-
-    # Serialize user data
-    result = user_schema.dump(user)
-
-    # Return JSON response
-    return jsonify(result), 200
-
-
-# Get user by email
-@app.route("/user/<string:email>", methods=["GET"])
-def get_user_by_email(email):
-    # Check if email is valid
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        return jsonify({"error": "Invalid email"}), 400
-
-    # Query user by email
+    # Validate input
+    if email == None or password == None:
+        return jsonify({"error": "Please specify email and password"}), 400
+    
+    # Lookup user
     user = User.query.filter_by(email=email).first()
-
-    # Check if user exists
     if user == None:
-        return jsonify({"error": "User not found"}), 404
+        return jsonify({'error': 'User not found'}), 404
 
-    # Serialize data
-    result = user_schema.dump(user)
+    # Authenticate user
+    if user.password_hash != password:
+        return jsonify({'error': 'Incorrect password'}), 401
+    
+    return jsonify(user_schema.dump(user)), 200
 
-    # Return JSON response
-    return jsonify(result), 200
 
-
-# Create a new user
-@app.route("/user", methods=["POST"])
+# Sign Up Route
+@app.route("/signup", methods=["POST"])
 def create_user():
     try:
         # Parse and validate data
@@ -123,6 +94,35 @@ def create_user():
         return jsonify({"error": e.messages}), 400
     except Exception as e:
         return jsonify({"error": "Internal server error"}), 500
+    
+
+# Returns goals for a user
+@app.route('/goals/<int:user_id>', methods=['GET'])
+def goals(user_id):
+    # Validate user
+    user = get_user(user_id)
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Deserialize data
+    user_data = user_schema.dump(user)
+
+    # Calculate calorie goal
+    BMR = calculate_bmr(user)
+    target_calories = apply_activity_level(BMR, user.activity_level)
+    target_calories = adjust_for_goal(target_calories, user.goal)
+
+    # Calculate macors
+    target_protein, target_carbs, target_fats = calculate_macros(target_calories, user.goal)
+
+    goals = {
+        "calories_goal": int(target_calories),
+        "protein_goal": int(target_protein),
+        "carbs_goal": int(target_carbs),
+        "fats_goal": int(target_fats)
+    }
+    return jsonify(goals), 200
+
 
 
 # Update a user
@@ -168,90 +168,36 @@ def delete_user(id):
     return jsonify({"message": "User deleted"}), 200
 
 
-# Get a single entry
-@app.route("/entry/<int:id>", methods=["GET"])
-def get_entry(id):
-    # Query entry by id
-    entry = Entry.query.get(id)
+# Returns entires and total intake for a user
+@app.route('/entries/<int:user_id>', methods=['GET'])
+def entries(user_id):
+    # Validate user
+    user = get_user(user_id)
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Get start and end of today
+    today = datetime.now().date()
+    start_of_today = datetime.combine(today, time.min)
+    end_of_today = datetime.combine(today, time.max)
 
-    # Check if entry exists
-    if entry == None:
-        return jsonify({"error": "Entry not found"}), 404
+    # Query entries
+    entries_query = Entry.query.filter(
+        Entry.user_id == user_id, 
+        Entry.time >= start_of_today, 
+        Entry.time <= end_of_today
+        ).order_by(Entry.time.desc())
+    entries = entries_query.all()
 
-    # Serialize entry data
-    result = entry_schema.dump(entry)
+    # Create response
+    data = {}
+    data["entries"] = entry_schema.dump(entries, many=True)
+    data["today_calories"] = sum(entry.calories for entry in entries)
+    data["today_protein"] = sum(entry.protein for entry in entries)
+    data["today_fat"] = sum(entry.fat for entry in entries)
+    data["today_carbs"] = sum(entry.carbs for entry in entries)
 
-    # Return JSON response
-    return jsonify(result), 200
-
-
-# Get all entries
-@app.route("/entries", methods=["GET"])
-def get_entries():
-    # Get query parameters
-    user_id = request.args.get("user_id")
-    if user_id != None and not user_id.isdigit():
-        return jsonify({"error": "user_id must be an integer"})
-
-    # Validate start_time
-    start_time_str = request.args.get("start_time")
-    start_time = None
-    if start_time_str != None:
-        start_time = validate_time(start_time_str)
-        if not start_time:
-            return jsonify(
-                {
-                    "error": "Invalid start_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"
-                }
-            )
-
-    # Validate end_time
-    end_time_str = request.args.get("end_time")
-    end_time = None
-    if end_time_str != None:
-        end_time = validate_time(end_time_str)
-        if not end_time:
-            return jsonify(
-                {
-                    "error": "Invalid end_time, must be in the format YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS"
-                }
-            )
-
-    # Sorting parameter
-    sort_by = request.args.get("sort_by", "time")
-    order = request.args.get("order", "asc")
-
-    # Validate sort by parameter
-    if sort_by != "time":
-        return jsonify({"error": "Invalid sort_by parameter"}), 400
-    if order not in {"asc", "desc"}:
-        return jsonify({"error": "Invalid order parameter"}), 400
-
-    query = Entry.query
-
-    # Apply filters
-    if user_id:
-        query = query.filter_by(user_id=user_id)
-    if start_time:
-        query = query.filter(Entry.time >= start_time)
-    if end_time:
-        query = query.filter(Entry.time <= end_time)
-
-    # Apply sorting
-    column = getattr(Entry, sort_by)
-    if order == "desc":
-        query = query.order_by(column.desc())
-    else:
-        query = query.order_by(column.asc())
-
-    # Query all entries
-    entries = query.all()
-
-    # Serialize entry data
-    result = entry_schema.dump(entries, many=True)
-
-    # Return JSON response
-    return jsonify(result), 200
+    return jsonify(data), 200
 
 
 # Create a new entry
@@ -332,130 +278,8 @@ def delete_entry(id):
     db.session.delete(entry)
     db.session.commit()
 
-    return jsonify({"message": "Entry deleted"}), 200
-
-
-# Authentication Routes
-
-# Login Route
-@app.route('/login', methods=['POST'])
-def login():
-    # Parse data
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password_hash')
-
-    # Validate input
-    if email == None or password == None:
-        return jsonify({"error": "Please specify email and password"}), 400
+    return jsonify({"message": "Entry deleted"}), 200 
     
-    # Lookup user
-    user = User.query.filter_by(email=email).first()
-    if user == None:
-        return jsonify({'error': 'User not found'}), 404
-
-    # Authenticate user
-    if user.password_hash != password:
-        return jsonify({'error': 'Incorrect password'}), 401
-    
-    return jsonify(user_schema.dump(user)), 200
-
-
-# Entry Page Route
-@app.route('/info/<int:user_id>', methods=['GET'])
-def info(user_id):
-    # Validate user
-    user = User.query.filter(User.id==user_id).first()
-    if user == None:
-        return jsonify({"error": "User not found"}), 404
-    
-    # Deserialize data
-    user_data = user_schema.dump(user)
-
-    # Remove unnecessary fields
-    unnecessary_fields = ['email', 'birth_date', 'first_name', 'last_name', 'gender', 'goal', 'height', 'activity_level']
-
-    # Get start and end of today
-    today = datetime.now().date()
-    start_of_today = datetime.combine(today, time.min)
-    end_of_today = datetime.combine(today, time.max)
-
-    # Query entries
-    data = {}
-    entries_query = Entry.query.filter(Entry.user_id == user_id, Entry.time >= start_of_today, Entry.time <= end_of_today)
-    entries_query = entries_query.order_by(Entry.time.desc())
-    entries = entries_query.all()
-    entries_data = entry_schema.dump(entries, many=True)
-    data["entries"] = entries_data
-
-    # Calculate macros
-    data["today_calories"] = sum(entry.calories for entry in entries)
-    data["today_protein"] = sum(entry.protein for entry in entries)
-    data["today_fat"] = sum(entry.fat for entry in entries)
-    data["today_carbs"] = sum(entry.carbs for entry in entries)
-
-    return jsonify(data), 200    
-
-
-# Returns goals for a user
-@app.route('/goals/<int:user_id>', methods=['GET'])
-def goals(user_id):
-    # Validate user
-    user = get_user(user_id)
-    if user == None:
-        return jsonify({"error": "User not found"}), 404
-    
-    # Deserialize data
-    user_data = user_schema.dump(user)
-
-    # Calculate calorie goal
-    BMR = calculate_bmr(user)
-    target_calories = apply_activity_level(BMR, user.activity_level)
-    target_calories = adjust_for_goal(target_calories, user.goal)
-
-    # Calculate macors
-    target_protein, target_carbs, target_fats = calculate_macros(target_calories, user.goal)
-
-    goals = {
-        "calories_goal": int(target_calories),
-        "protein_goal": int(target_protein),
-        "carbs_goal": int(target_carbs),
-        "fats_goal": int(target_fats)
-    }
-    return jsonify(goals), 200
-
-
-# Returns entires and total intake for a user
-@app.route('/entries/<int:user_id>', methods=['GET'])
-def entries(user_id):
-    # Validate user
-    user = get_user(user_id)
-    if user == None:
-        return jsonify({"error": "User not found"}), 404
-    
-    # Get start and end of today
-    today = datetime.now().date()
-    start_of_today = datetime.combine(today, time.min)
-    end_of_today = datetime.combine(today, time.max)
-
-    # Query entries
-    entries_query = Entry.query.filter(
-        Entry.user_id == user_id, 
-        Entry.time >= start_of_today, 
-        Entry.time <= end_of_today
-        ).order_by(Entry.time.desc())
-    entries = entries_query.all()
-
-    # Create response
-    data = {}
-    data["entries"] = entry_schema.dump(entries, many=True)
-    data["today_calories"] = sum(entry.calories for entry in entries)
-    data["today_protein"] = sum(entry.protein for entry in entries)
-    data["today_fat"] = sum(entry.fat for entry in entries)
-    data["today_carbs"] = sum(entry.carbs for entry in entries)
-
-    return jsonify(data), 200 
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
