@@ -124,7 +124,6 @@ def goals(user_id):
     return jsonify(goals), 200
 
 
-
 # Update a user
 @app.route("/user/<int:id>", methods=["PUT"])
 def update_user(id):

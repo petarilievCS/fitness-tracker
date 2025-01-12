@@ -6,10 +6,13 @@ def calculate_age(birth_date) -> int:
 
 def calculate_bmr(user) -> int:
     user_age = calculate_age(user.birth_date)
+    user_weight = float(user.weight)
+    user_height = float(user.height)
+
     if user.gender == "Male":
-        return 88.362 + (13.397 * user.weight) + (4.799 * user.height) - (5.677 * user_age)
+        return 88.362 + (13.397 * user_weight) + (4.799 * user_height) - (5.677 * user_age)
     else:
-        return 447.593 + (9.247 * user.weight) + (3.098 * user.height) - (4.330 * user_age)
+        return 447.593 + (9.247 * user_weight) + (3.098 * user_height) - (4.330 * user_age)
     
 def apply_activity_multiplier(BMR, activity_level):
     multipliers = {
