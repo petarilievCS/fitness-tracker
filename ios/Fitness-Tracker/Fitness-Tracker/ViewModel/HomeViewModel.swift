@@ -11,6 +11,8 @@ import SwiftUI
 class HomeViewModel {
     private let dataService = DataService()
     
+    let user: Int
+    
     // Macro variables
     var calories: Double = 0.0
     var calorieGoal: Double = 0.0
@@ -38,8 +40,11 @@ class HomeViewModel {
         return min(fats / fatsGoal, 1)
     }
     
+    var entries: [Entry] = []
+    
     // Initializers
-    init(calories: Double, calorieGoal: Double, protein: Double, proteinGoal: Double, carbs: Double, carbsGoal: Double, fats: Double, fatsGoal: Double) {
+    init(user: Int, calories: Double, calorieGoal: Double, protein: Double, proteinGoal: Double, carbs: Double, carbsGoal: Double, fats: Double, fatsGoal: Double, entries: [Entry]) {
+        self.user = user
         self.calories = calories
         self.calorieGoal = calorieGoal
         self.protein = protein
@@ -48,10 +53,19 @@ class HomeViewModel {
         self.carbsGoal = carbsGoal
         self.fats = fats
         self.fatsGoal = fatsGoal
+        self.entries = entries
+    }
+    
+    init(user: Int) {
+        self.user = user
+        
+        Task {
+            self.entries = try await dataService.fetchEntries(for: user)
+        }
     }
     
     // Mock view model
     static func mock() -> HomeViewModel {
-        .init(calories: 1000, calorieGoal: 1500, protein: 100, proteinGoal: 200, carbs: 100, carbsGoal: 200, fats: 100, fatsGoal: 200)
+        .init(user:1, calories: 1000, calorieGoal: 1500, protein: 100, proteinGoal: 200, carbs: 100, carbsGoal: 200, fats: 100, fatsGoal: 200, entries: [])
     }
 }
