@@ -8,35 +8,52 @@
 import SwiftUI
 
 struct NewEntryView: View {
-    @State private var viewModel: NewEntryViewModel
-    
-    init(viewModel: NewEntryViewModel) {
-        self.viewModel = viewModel
-    }
+    @State var viewModel: NewEntryViewModel
+    @Binding var isPresented: Bool
     
     var body: some View {
-        CustomTextField(text: viewModel.name, placeholder: "Name", characterLimit: 100)
-        CustomTextField(text: viewModel.calories, placeholder: "Calories", keyboardType: .numberPad)
-        CustomTextField(text: viewModel.protein, placeholder: "Protein", keyboardType: .numberPad)
-        CustomTextField(text: viewModel.carbs, placeholder: "Carbs", keyboardType: .numberPad)
-        CustomTextField(text: viewModel.fat, placeholder: "Fats", keyboardType: .numberPad)
-        CustomTextField(text: viewModel.servingSize, placeholder: "Serving Size", characterLimit: 25)
-        CustomTextField(text: viewModel.numberOfServings, placeholder: "Number of Servings", keyboardType: .numberPad)
-        
-        Button(action :{
-            viewModel.addEntry()
-        }) {
-            Text("Save")
-                .padding()
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .background(.blue)
-                .foregroundStyle(.white)
-                .cornerRadius(10)
+        VStack(spacing: 10) {
+            CustomTextField(text: viewModel.name, placeholder: "Name", characterLimit: 100)
+            CustomTextField(text: viewModel.calories, placeholder: "Calories", keyboardType: .numberPad)
+            CustomTextField(text: viewModel.protein, placeholder: "Protein", keyboardType: .numberPad)
+            CustomTextField(text: viewModel.carbs, placeholder: "Carbs", keyboardType: .numberPad)
+            CustomTextField(text: viewModel.fat, placeholder: "Fats", keyboardType: .numberPad)
+            CustomTextField(text: viewModel.servingSize, placeholder: "Serving Size", characterLimit: 25)
+            CustomTextField(text: viewModel.numberOfServings, placeholder: "Number of Servings", keyboardType: .numberPad)
+            
+            Button(action :{
+                viewModel.addEntry()
+            }) {
+                Text("Save")
+                    .padding()
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .background(.blue)
+                    .foregroundStyle(.white)
+                    .cornerRadius(10)
+                    .fontWeight(.bold)
+            }
+            
+            Button() {
+                isPresented = false
+            } label: {
+                Text("Cancel")
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .fontWeight(.bold)
+            }
+
         }
+        .padding()
     }
 }
 
 #Preview {
-    NewEntryView(viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1))
+    @Previewable @State var isPresented: Bool = false
+    NewEntryView(
+        viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1),
+        isPresented: $isPresented)
 }

@@ -71,11 +71,15 @@ struct HomeView: View {
         }
         .overlay(alignment: .bottom) {
             CircleButton {
-                viewModel.isShowingAlert.toggle()
+                viewModel.isShowingSheet.toggle()
             }
         }
-        .alert("Add New Entry", isPresented: $viewModel.isShowingAlert) {
-            NewEntryView(viewModel: NewEntryViewModel(dataService: DataService(), user: userId))
+        .sheet(isPresented: $viewModel.isShowingSheet) {
+            NewEntryView(
+                viewModel: NewEntryViewModel(
+                    dataService: DataService(),
+                    user: userId),
+                isPresented: $viewModel.isShowingSheet)
         }
     }
 }
