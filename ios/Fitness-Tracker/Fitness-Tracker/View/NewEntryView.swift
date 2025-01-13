@@ -21,6 +21,16 @@ struct NewEntryView: View {
             CustomTextField(text: viewModel.servingSize, placeholder: "Serving Size", characterLimit: 25)
             CustomTextField(text: viewModel.numberOfServings, placeholder: "Number of Servings", keyboardType: .numberPad)
             
+            DatePicker(
+                "Date",
+                selection: $viewModel.time,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            .datePickerStyle(.compact)
+            .padding()
+            .background(.gray.opacity(0.2))
+            .cornerRadius(10)
+            
             Button(action :{
                 viewModel.addEntry()
             }) {
