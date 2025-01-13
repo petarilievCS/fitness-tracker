@@ -8,11 +8,12 @@
 import SwiftUI
 
 struct CustomTextField: View {
-    @State var text: String
+    @Binding var text: String
+    @Binding var shakeTrigger: Bool
     
     let placeholder: String
-    let keyboardType: UIKeyboardType
-    let characterLimit: Int
+    var keyboardType: UIKeyboardType = .default
+    var characterLimit: Int = 10
     
     var body: some View {
         TextField(placeholder, text: $text)
@@ -23,16 +24,22 @@ struct CustomTextField: View {
                     text = oldValue
                 }
             }
+            .modifier(ShakeEffect(shakes: shakeTrigger ? 2 : 0))
+    }
+}
+
+struct ShakeEffect: GeometryEffect {
+    func effectValue(size: CGSize) -> ProjectionTransform {
+        return ProjectionTransform(CGAffineTransform(translationX: -5 * sin(position * 2 * .pi), y: 0))
     }
     
-    init(text: String,
-         placeholder: String,
-         keyboardType: UIKeyboardType = .default,
-         characterLimit: Int = 10
-    ) {
-        self.text = text
-        self.placeholder = placeholder
-        self.keyboardType = keyboardType
-        self.characterLimit = characterLimit
+    init(shakes: Int) {
+        position = CGFloat(shakes)
+    }
+    
+    var position: CGFloat
+    var animatableData: CGFloat {
+        get { position }
+        set { position = newValue }
     }
 }

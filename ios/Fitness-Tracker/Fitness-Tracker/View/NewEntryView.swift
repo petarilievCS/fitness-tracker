@@ -13,13 +13,48 @@ struct NewEntryView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            CustomTextField(text: viewModel.name, placeholder: "Name", characterLimit: 100)
-            CustomTextField(text: viewModel.calories, placeholder: "Calories", keyboardType: .numberPad)
-            CustomTextField(text: viewModel.protein, placeholder: "Protein", keyboardType: .numberPad)
-            CustomTextField(text: viewModel.carbs, placeholder: "Carbs", keyboardType: .numberPad)
-            CustomTextField(text: viewModel.fat, placeholder: "Fats", keyboardType: .numberPad)
-            CustomTextField(text: viewModel.servingSize, placeholder: "Serving Size", characterLimit: 25)
-            CustomTextField(text: viewModel.numberOfServings, placeholder: "Number of Servings", keyboardType: .numberPad)
+            CustomTextField(
+                text: $viewModel.name,
+                shakeTrigger: $viewModel.nameShakeTrigger,
+                placeholder: viewModel.namePlaceholder,
+                characterLimit: 100
+            )
+            CustomTextField(
+                text: $viewModel.caloriesString,
+                shakeTrigger: $viewModel.caloriesShakeTrigger,
+                placeholder: viewModel.caloriesPlaceholder,
+                keyboardType: .numberPad
+            )
+            CustomTextField(
+                text: $viewModel.proteinString,
+                shakeTrigger: $viewModel.proteinShakeTrigger,
+                placeholder: viewModel.proteinPlaceholder,
+                keyboardType: .numberPad
+            )
+            CustomTextField(
+                text: $viewModel.carbsString,
+                shakeTrigger: $viewModel.carbsShakeTrigger,
+                placeholder: viewModel.carbsPlaceholder,
+                keyboardType: .numberPad
+            )
+            CustomTextField(
+                text: $viewModel.fatString,
+                shakeTrigger: $viewModel.fatShakeTrigger,
+                placeholder: viewModel.fatPlaceholder,
+                keyboardType: .numberPad
+            )
+            CustomTextField(
+                text: $viewModel.servingSizeString,
+                shakeTrigger: $viewModel.servingSizeShakeTrigger,
+                placeholder: viewModel.servingSizePlaceholder,
+                characterLimit: 25
+            )
+            CustomTextField(
+                text: $viewModel.numberOfServingsString,
+                shakeTrigger: $viewModel.numberOfServingsShakeTrigger,
+                placeholder: viewModel.numberOfServingsPlaceholder,
+                keyboardType: .numberPad
+            )
             
             DatePicker(
                 "Date",
