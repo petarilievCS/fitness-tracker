@@ -78,5 +78,18 @@ struct User: Codable, Identifiable {
             )
         }
     }
+    
+    init(id: Int, firstName: String, lastName: String, email: String, gender: String, birthDate: Date, weight: Double, height: Double, activityLevel: String, goal: String) {
+        self.id = id
+        self.firstName = firstName
+        self.lastName = lastName
+        self.email = email
+        self.gender = gender
+        self.birthDate = birthDate
+        self.weight = weight
+        self.height = height
+        self.activityLevel = activityLevel
+        self.goal = goal
+    }
 }
 

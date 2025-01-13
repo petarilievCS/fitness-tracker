@@ -9,8 +9,8 @@ import SwiftUI
 
 struct MacroRingProgressView: View {
     var progress: Double
-    var goal: Double
-    var intake: Double
+    var goal: Int
+    var intake: Int
     
     let title: String
     let color: Color
@@ -23,7 +23,7 @@ struct MacroRingProgressView: View {
                     lineWidth: 15,
                     ringColor: color
                 )
-                Text("\(Int(intake))")
+                Text("\(intake)")
                     .fontWeight(.bold)
                     .font(.system(size: 22))
                     .fontDesign(.rounded)
@@ -34,7 +34,7 @@ struct MacroRingProgressView: View {
                     .fontWeight(.bold)
                     .font(.system(size: 24))
                     .fontDesign(.rounded)
-                Text("of \(Int(goal)) g")
+                Text("of \(goal) g")
                     .fontWeight(.semibold)
                     .foregroundStyle(.secondary)
                     .fontDesign(.rounded)

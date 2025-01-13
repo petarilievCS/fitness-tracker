@@ -13,7 +13,13 @@ enum LoginError: Error {
     case unknownError
 }
 
-struct DataService {
+protocol DataServiceProtocol {
+    func fetchEntries(for user: Int) async throws -> Entries
+    func fetchGoals(for user: Int) async throws -> Goals
+    func loginUser(email: String, password: String) async throws -> User
+}
+
+struct DataService: DataServiceProtocol {
     private let decoder: JSONDecoder = JSONDecoder()
     private let baseUrlString: String = "https://flask-api-122291004318.us-central1.run.app"
     
@@ -60,9 +66,9 @@ struct DataService {
         }
     }
     
-    func fetchEntries(for user: Int) async throws -> [Entry] {
+    func fetchEntries(for user: Int) async throws -> Entries {
         // 1: Define URL
-        guard let url = URL(string: "\(baseUrlString)/entries?user_id=\(user)") else {
+        guard let url = URL(string: "\(baseUrlString)/entries/\(user)") else {
             throw URLError(.badURL)
         }
 
@@ -79,8 +85,8 @@ struct DataService {
         
         switch httpResonse.statusCode {
         case 200:
-            let user = try decoder.decode([Entry].self, from: data)
-            return user
+            let entries = try decoder.decode(Entries.self, from: data)
+            return entries
         case 400..<500:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
                 throw LoginError.serverError(errorResponse.error)
@@ -92,8 +98,8 @@ struct DataService {
         }
     }
     
-    func fetchGoals(for user: Int) async throws -> [Goals] {
-        guard let url = URL(string: "\(baseUrlString)/goals?user_id=\(user)") else {
+    func fetchGoals(for user: Int) async throws -> Goals {
+        guard let url = URL(string: "\(baseUrlString)/goals/\(user)") else {
             throw URLError(.badURL)
         }
         
@@ -107,7 +113,7 @@ struct DataService {
         
         switch httpResponse.statusCode {
         case 200:
-            let goals = try decoder.decode([Goals].self, from: data)
+            let goals = try decoder.decode(Goals.self, from: data)
             return goals
         case 400..<500:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {

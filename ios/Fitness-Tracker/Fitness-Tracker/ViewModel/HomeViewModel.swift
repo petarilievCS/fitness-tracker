@@ -9,63 +9,74 @@ import SwiftUI
 
 @Observable
 class HomeViewModel {
-    private let dataService = DataService()
+    private let dataService: DataServiceProtocol
+    private let user: Int
     
-    let user: Int
+    private var entries: Entries?
+    private var goals: Goals?
+
+    var calories: Int {
+        return entries?.todayCalories ?? 0
+    }
     
-    // Macro variables
-    var calories: Double = 0.0
-    var calorieGoal: Double = 0.0
-    var protein: Double = 0.0
-    var proteinGoal: Double = 0.0
-    var carbs: Double = 0.0
-    var carbsGoal: Double = 0.0
-    var fats: Double = 0.0
-    var fatsGoal: Double = 0.0
+    var protein: Int {
+        return entries?.todayProtein ?? 0
+    }
     
-    // Comptued variables
-    var caloriesProgress: Double {
-        return min(calories / calorieGoal, 1)
+    var carbs: Int {
+        return entries?.todayCarbs ?? 0
+    }
+    
+    var fats: Int {
+        return entries?.todayFat ?? 0
+    }
+    
+    var calorieGoal: Int {
+        return goals?.caloriesGoal ?? K.defaultCalories
+    }
+    
+    var proteinGoal: Int {
+        return goals?.proteinGoal ?? K.defaultProtein
+    }
+    
+    var carbsGoal: Int {
+        return goals?.carbsGoal ?? K.defaultCarbs
+    }
+    
+    var fatsGoal: Int {
+        return goals?.fatsGoal ?? K.defaultFat
+    }
+    
+    var calorieProgress: Double {
+        return min(Double(calories) / Double(calorieGoal), 1)
     }
     
     var proteinProgress: Double {
-        return min(protein / proteinGoal, 1)
+        return min(Double(protein) / Double(proteinGoal), 1)
     }
     
     var carbsProgress: Double {
-        return min(carbs / carbsGoal, 1)
+        return min(Double(carbs) / Double(carbsGoal), 1)
     }
     
     var fatsProgress: Double {
-        return min(fats / fatsGoal, 1)
+        return min(Double(fats) / Double(fatsGoal), 1)
     }
-    
-    var entries: [Entry] = []
-    
-    // Initializers
-    init(user: Int, calories: Double, calorieGoal: Double, protein: Double, proteinGoal: Double, carbs: Double, carbsGoal: Double, fats: Double, fatsGoal: Double, entries: [Entry]) {
-        self.user = user
-        self.calories = calories
-        self.calorieGoal = calorieGoal
-        self.protein = protein
-        self.proteinGoal = proteinGoal
-        self.carbs = carbs
-        self.carbsGoal = carbsGoal
-        self.fats = fats
-        self.fatsGoal = fatsGoal
-        self.entries = entries
-    }
-    
-    init(user: Int) {
-        self.user = user
         
-        Task {
-            self.entries = try await dataService.fetchEntries(for: user)
-        }
+    init(user: Int, dataService: DataService) {
+        self.user = user
+        self.dataService = dataService
+        loadData()
     }
     
-    // Mock view model
-    static func mock() -> HomeViewModel {
-        .init(user:1, calories: 1000, calorieGoal: 1500, protein: 100, proteinGoal: 200, carbs: 100, carbsGoal: 200, fats: 100, fatsGoal: 200, entries: [])
+    func loadData() {
+        Task {
+            do {
+                self.entries = try await dataService.fetchEntries(for: user)
+                self.goals = try await dataService.fetchGoals(for: user)
+            } catch {
+                print("Error: \(error)")
+            }
+        }
     }
 }

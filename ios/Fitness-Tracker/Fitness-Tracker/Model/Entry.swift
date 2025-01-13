@@ -65,4 +65,17 @@ struct Entry: Codable, Identifiable {
             )
         }
     }
+    
+    init(id: Int, name: String, calories: Int, protein: Int, carbs: Int, fat: Int, servingSize: String, numServings: Double, time: Date, userId: Int) {
+        self.id = id
+        self.name = name
+        self.calories = calories
+        self.protein = protein
+        self.carbs = carbs
+        self.fat = fat
+        self.servingSize = servingSize
+        self.numServings = numServings
+        self.time = time
+        self.userId = userId
+    }
 }

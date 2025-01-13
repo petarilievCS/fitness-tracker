@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var viewModel = HomeViewModel.mock()
+    private var viewModel: HomeViewModel
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+    }
     
     var body: some View {
         ScrollView {
@@ -22,7 +26,7 @@ struct HomeView: View {
                     // Calories Ring View
                     ZStack {
                         RingProgressView(
-                            progress: viewModel.caloriesProgress,
+                            progress: viewModel.calorieProgress,
                             lineWidth: 50.0
                         )
                         VStack {
@@ -64,9 +68,10 @@ struct HomeView: View {
             
             // Entries
         }
+        .overlay(alignment: .bottom) {
+            Button("Add") {
+                print("Add clicked")
+            }
+        }
     }
-}
-
-#Preview {
-    HomeView()
 }

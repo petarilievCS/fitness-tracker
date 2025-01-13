@@ -10,9 +10,11 @@ import SwiftUI
 struct ContentView: View {
     @AppStorage("userId") private var userId: Int?
     
+    private let dataService = DataService()
+    
     var body: some View {
-        if userId != nil {
-            HomeView()
+        if let userId = userId {
+            HomeView(viewModel: HomeViewModel(user: userId, dataService: DataService()))
         } else {
             LoginView()
         }
