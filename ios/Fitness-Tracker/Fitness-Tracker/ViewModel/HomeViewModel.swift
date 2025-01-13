@@ -62,6 +62,8 @@ class HomeViewModel {
     var fatsProgress: Double {
         return min(Double(fats) / Double(fatsGoal), 1)
     }
+    
+    var isShowingAlert: Bool = false
         
     init(user: Int, dataService: DataServiceProtocol) {
         self.user = user

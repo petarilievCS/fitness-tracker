@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
-    private var viewModel: HomeViewModel
+    @State private var viewModel: HomeViewModel
+    @AppStorage("userId") private var userId: Int = 0
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -70,8 +71,11 @@ struct HomeView: View {
         }
         .overlay(alignment: .bottom) {
             CircleButton {
-                print("Button Tapped")
+                viewModel.isShowingAlert.toggle()
             }
+        }
+        .alert("Add New Entry", isPresented: $viewModel.isShowingAlert) {
+            NewEntryView(viewModel: NewEntryViewModel(dataService: DataService(), user: userId))
         }
     }
 }
