@@ -15,25 +15,13 @@ struct NewEntryView: View {
     }
     
     var body: some View {
-        TextField("Name", text: $viewModel.name)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-        TextField("Calories", text: $viewModel.calories)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.numberPad)
-        TextField("Protein", text: $viewModel.protein)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.numberPad)
-        TextField("Carbs", text: $viewModel.carbs)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.numberPad)
-        TextField("Fats", text: $viewModel.fat)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.numberPad)
-        TextField("Serving Size", text: $viewModel.numberOfServings)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-        TextField("Number of Servings", text: $viewModel.numberOfServings)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.numberPad)
+        CustomTextField(text: viewModel.name, placeholder: "Name", characterLimit: 100)
+        CustomTextField(text: viewModel.calories, placeholder: "Calories", keyboardType: .numberPad)
+        CustomTextField(text: viewModel.protein, placeholder: "Protein", keyboardType: .numberPad)
+        CustomTextField(text: viewModel.carbs, placeholder: "Carbs", keyboardType: .numberPad)
+        CustomTextField(text: viewModel.fat, placeholder: "Fats", keyboardType: .numberPad)
+        CustomTextField(text: viewModel.servingSize, placeholder: "Serving Size", characterLimit: 25)
+        CustomTextField(text: viewModel.numberOfServings, placeholder: "Number of Servings", keyboardType: .numberPad)
     }
 }
 
