@@ -63,7 +63,7 @@ class HomeViewModel {
         return min(Double(fats) / Double(fatsGoal), 1)
     }
         
-    init(user: Int, dataService: DataService) {
+    init(user: Int, dataService: DataServiceProtocol) {
         self.user = user
         self.dataService = dataService
         loadData()

@@ -69,9 +69,13 @@ struct HomeView: View {
             // Entries
         }
         .overlay(alignment: .bottom) {
-            Button("Add") {
-                print("Add clicked")
+            CircleButton {
+                print("Button Tapped")
             }
         }
     }
+}
+
+#Preview {
+    HomeView(viewModel: HomeViewModel(user: 1, dataService: MockDataService()))
 }
