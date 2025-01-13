@@ -22,6 +22,18 @@ struct NewEntryView: View {
         CustomTextField(text: viewModel.fat, placeholder: "Fats", keyboardType: .numberPad)
         CustomTextField(text: viewModel.servingSize, placeholder: "Serving Size", characterLimit: 25)
         CustomTextField(text: viewModel.numberOfServings, placeholder: "Number of Servings", keyboardType: .numberPad)
+        
+        Button(action :{
+            viewModel.addEntry()
+        }) {
+            Text("Save")
+                .padding()
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .background(.blue)
+                .foregroundStyle(.white)
+                .cornerRadius(10)
+        }
     }
 }
 
