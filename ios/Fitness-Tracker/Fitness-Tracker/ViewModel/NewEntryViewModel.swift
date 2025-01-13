@@ -52,15 +52,42 @@ class NewEntryViewModel {
             return
         }
         
-        guard let calories = Int(caloriesString), calories > 0 else {
+        guard let calories = Int(caloriesString) else {
             caloriesString = ""
-            caloriesPlaceholder = "Calories must be larger than 0"
+            caloriesPlaceholder = "Invalid calories"
+            withAnimation {
+                caloriesShakeTrigger.toggle()
+            }
             return
         }
         
-        // TODO: Validate protein
-        // TODO: Validate carbs
-        // TODO: Validate fat
+        guard let protein = Int(proteinString), protein > 0 else {
+            proteinString = ""
+            proteinPlaceholder = "Invalid protein"
+            withAnimation {
+                proteinShakeTrigger.toggle()
+            }
+            return
+        }
+        
+        guard let carbs = Int(carbsString), carbs > 0 else {
+            carbsString = ""
+            carbsPlaceholder = "Invalid carbs"
+            withAnimation {
+                carbsShakeTrigger.toggle()
+            }
+            return
+        }
+        
+        guard let fat = Int(fatString), fat > 0 else {
+            fatString = ""
+            fatPlaceholder = "Invalid fat"
+            withAnimation {
+                fatShakeTrigger.toggle()
+            }
+            return
+        }
+        
         // TODO: Validate serving size
         // TODO: Validate number of servings
         // TODO: Validate time
