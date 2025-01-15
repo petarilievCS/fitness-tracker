@@ -9,7 +9,6 @@ import Foundation
 
 let mockEntires: [Entry] = [
     Entry(
-        id: 1,
         name: "Chicken Breast",
         calories: 330,
         protein: 62,
@@ -21,7 +20,6 @@ let mockEntires: [Entry] = [
         userId: 1
     ),
     Entry(
-        id: 2,
         name: "Brown Rice",
         calories: 323,
         protein: 8,
@@ -33,7 +31,6 @@ let mockEntires: [Entry] = [
         userId: 1
     ),
     Entry(
-        id: 3,
         name: "Avocado",
         calories: 240,
         protein: 3,
@@ -45,7 +42,6 @@ let mockEntires: [Entry] = [
         userId: 1
     ),
     Entry(
-        id: 4,
         name: "Salmon",
         calories: 206,
         protein: 22,
@@ -57,7 +53,6 @@ let mockEntires: [Entry] = [
         userId: 1
     ),
     Entry(
-        id: 5,
         name: "Sweet Potato",
         calories: 180,
         protein: 4,

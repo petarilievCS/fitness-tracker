@@ -125,4 +125,35 @@ struct DataService: DataServiceProtocol {
             throw LoginError.unknownError
         }
     }
+    
+    func saveEntry(_ entry: Entry) async throws {
+        guard let url = URL(string: "\(baseUrlString)/entry") else {
+            throw URLError(.badURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let encodedData = try JSONEncoder().encode(entry)
+        request.httpBody = encodedData
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        switch httpResponse.statusCode {
+        case 200:
+            print("Successfully saved entry")
+            print(data)
+            break
+        default:
+            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw LoginError.serverError(errorResponse.error)
+            } else {
+                throw LoginError.decodingError("Error: Unable to decode server error.")
+            }
+        }
+    }
 }

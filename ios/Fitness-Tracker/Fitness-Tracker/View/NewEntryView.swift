@@ -53,7 +53,7 @@ struct NewEntryView: View {
                 text: $viewModel.numberOfServingsString,
                 shakeTrigger: $viewModel.numberOfServingsShakeTrigger,
                 placeholder: viewModel.numberOfServingsPlaceholder,
-                keyboardType: .numberPad
+                keyboardType: .decimalPad
             )
             
             DatePicker(

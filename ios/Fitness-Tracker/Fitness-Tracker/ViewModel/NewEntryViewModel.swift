@@ -44,7 +44,6 @@ class NewEntryViewModel {
     
     func addEntry() {
         guard name.count > 0 else {
-            name = ""
             namePlaceholder = "Please enter a name"
             withAnimation {
                 nameShakeTrigger.toggle()
@@ -52,44 +51,66 @@ class NewEntryViewModel {
             return
         }
         
-        guard let calories = Int(caloriesString) else {
-            caloriesString = ""
-            caloriesPlaceholder = "Invalid calories"
+        guard caloriesString.count > 0 else {
+            caloriesPlaceholder = "Please enter calories"
             withAnimation {
                 caloriesShakeTrigger.toggle()
             }
             return
         }
         
-        guard let protein = Int(proteinString), protein > 0 else {
-            proteinString = ""
-            proteinPlaceholder = "Invalid protein"
+        guard proteinString.count > 0 else {
+            proteinPlaceholder = "Please enter protein"
             withAnimation {
                 proteinShakeTrigger.toggle()
             }
             return
         }
         
-        guard let carbs = Int(carbsString), carbs > 0 else {
-            carbsString = ""
-            carbsPlaceholder = "Invalid carbs"
+        guard carbsString.count > 0 else {
+            carbsPlaceholder = "Please enter carbs"
             withAnimation {
                 carbsShakeTrigger.toggle()
             }
             return
         }
         
-        guard let fat = Int(fatString), fat > 0 else {
-            fatString = ""
-            fatPlaceholder = "Invalid fat"
+        guard fatString.count > 0 else {
+            fatPlaceholder = "Please enter fats"
             withAnimation {
                 fatShakeTrigger.toggle()
             }
             return
         }
         
-        // TODO: Validate serving size
-        // TODO: Validate number of servings
-        // TODO: Validate time
+        guard servingSizeString.count > 0 else {
+            servingSizePlaceholder = "Please enter serving size"
+            withAnimation {
+                servingSizeShakeTrigger.toggle()
+            }
+            return
+        }
+        
+        guard numberOfServingsString.count > 0 else {
+            numberOfServingsPlaceholder = "Please enter number of servings"
+            withAnimation {
+                numberOfServingsShakeTrigger.toggle()
+            }
+            return
+        }
+        
+        // TODO: Validate that numberOfServingsString conforms to NUMERIC(7,3)
+        
+        let entry = Entry(
+            name: name,
+            calories: Int(caloriesString)!,
+            protein: Int(proteinString)!,
+            carbs: Int(carbsString)!,
+            fat: Int(fatString)!,
+            servingSize: servingSizeString,
+            numServings: Double(numberOfServingsString)!,
+            time: time,
+            userId: user
+        )
     }
 }

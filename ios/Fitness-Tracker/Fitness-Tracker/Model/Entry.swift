@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct Entry: Codable, Identifiable {
-    let id: Int
+struct Entry: Codable {
     let name: String
     let calories: Int
     let protein: Int
@@ -20,7 +19,6 @@ struct Entry: Codable, Identifiable {
     let userId: Int
     
     enum CodingKeys: String, CodingKey {
-        case id
         case name
         case calories
         case protein
@@ -34,7 +32,6 @@ struct Entry: Codable, Identifiable {
     
     init (from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(Int.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         calories = try container.decode(Int.self, forKey: .calories)
         protein = try container.decode(Int.self, forKey: .protein)
@@ -66,8 +63,7 @@ struct Entry: Codable, Identifiable {
         }
     }
     
-    init(id: Int, name: String, calories: Int, protein: Int, carbs: Int, fat: Int, servingSize: String, numServings: Double, time: Date, userId: Int) {
-        self.id = id
+    init(name: String, calories: Int, protein: Int, carbs: Int, fat: Int, servingSize: String, numServings: Double, time: Date, userId: Int) {
         self.name = name
         self.calories = calories
         self.protein = protein
