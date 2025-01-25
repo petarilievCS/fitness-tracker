@@ -11,6 +11,9 @@ struct HomeView: View {
     @State private var viewModel: HomeViewModel
     @AppStorage("userId") private var userId: Int = 0
     
+    // Constants
+    let paddingSize: CGFloat = 50
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
     }
@@ -64,10 +67,14 @@ struct HomeView: View {
                             color: .yellow)
                     }
                 }
-                .padding(50)
+                .padding(paddingSize)
             }
             
-            // Entries
+            // Entries table
+            ForEach(viewModel.entries, id: \.name) { entry in
+                TableCellView(viewModel: TableCellViewModel(entry: entry))
+            }
+            .padding(.horizontal)
         }
         .overlay(alignment: .bottom) {
             CircleButton {
@@ -78,8 +85,12 @@ struct HomeView: View {
             NewEntryView(
                 viewModel: NewEntryViewModel(
                     dataService: DataService(),
-                    user: userId),
-                isPresented: $viewModel.isShowingSheet)
+                    user: userId,
+                    onSave: {
+                        viewModel.loadData()
+                    }
+                )
+            )
         }
     }
 }

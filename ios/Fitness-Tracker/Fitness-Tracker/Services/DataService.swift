@@ -17,6 +17,7 @@ protocol DataServiceProtocol {
     func fetchEntries(for user: Int) async throws -> Entries
     func fetchGoals(for user: Int) async throws -> Goals
     func loginUser(email: String, password: String) async throws -> User
+    func saveEntry(_ entry: Entry) async throws
 }
 
 struct DataService: DataServiceProtocol {
@@ -135,7 +136,9 @@ struct DataService: DataServiceProtocol {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let encodedData = try JSONEncoder().encode(entry)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let encodedData = try encoder.encode(entry)
         request.httpBody = encodedData
         
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -144,9 +147,8 @@ struct DataService: DataServiceProtocol {
         }
         
         switch httpResponse.statusCode {
-        case 200:
+        case 201:
             print("Successfully saved entry")
-            print(data)
             break
         default:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {

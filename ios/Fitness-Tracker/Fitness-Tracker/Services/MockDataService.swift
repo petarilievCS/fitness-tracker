@@ -50,4 +50,8 @@ class MockDataService: DataServiceProtocol {
             activityLevel: "Moderately Active",
             goal: "Maintain")
     }
+    
+    func saveEntry(_ entry: Entry) async throws {
+        return
+    }
 }

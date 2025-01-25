@@ -191,10 +191,10 @@ def entries(user_id):
     # Create response
     data = {}
     data["entries"] = entry_schema.dump(entries, many=True)
-    data["today_calories"] = sum(entry.calories for entry in entries)
-    data["today_protein"] = sum(entry.protein for entry in entries)
-    data["today_fat"] = sum(entry.fat for entry in entries)
-    data["today_carbs"] = sum(entry.carbs for entry in entries)
+    data["today_calories"] = sum(int(entry.calories * entry.num_servings) for entry in entries)
+    data["today_protein"] = sum(int(entry.protein  * entry.num_servings) for entry in entries)
+    data["today_fat"] = sum(int(entry.fat * entry.num_servings) for entry in entries)
+    data["today_carbs"] = sum(int(entry.carbs * entry.num_servings) for entry in entries)
 
     return jsonify(data), 200
 

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NewEntryView: View {
     @State var viewModel: NewEntryViewModel
-    @Binding var isPresented: Bool
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack(spacing: 10) {
@@ -67,7 +67,9 @@ struct NewEntryView: View {
             .cornerRadius(10)
             
             Button(action :{
-                viewModel.addEntry()
+                if viewModel.addEntryButtonTapped() {
+                    dismiss()
+                }
             }) {
                 Text("Save")
                     .padding()
@@ -80,7 +82,7 @@ struct NewEntryView: View {
             }
             
             Button() {
-                isPresented = false
+               dismiss()
             } label: {
                 Text("Cancel")
                     .padding()
@@ -99,6 +101,5 @@ struct NewEntryView: View {
 #Preview {
     @Previewable @State var isPresented: Bool = false
     NewEntryView(
-        viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1),
-        isPresented: $isPresented)
+        viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1, onSave: {}))
 }

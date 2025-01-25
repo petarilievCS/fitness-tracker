@@ -14,7 +14,7 @@ struct ContentView: View {
     
     var body: some View {
         if let userId = userId {
-            HomeView(viewModel: HomeViewModel(user: userId, dataService: DataService()))
+            HomeView(viewModel: HomeViewModel(user: userId, dataService: dataService))
         } else {
             LoginView()
         }

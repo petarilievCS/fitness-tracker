@@ -12,23 +12,27 @@ class HomeViewModel {
     private let dataService: DataServiceProtocol
     private let user: Int
     
-    private var entries: Entries?
+    private var entriesData: Entries?
     private var goals: Goals?
+    
+    var entries: [Entry] {
+        return entriesData?.entries ?? []
+    }
 
     var calories: Int {
-        return entries?.todayCalories ?? 0
+        return entriesData?.todayCalories ?? 0
     }
     
     var protein: Int {
-        return entries?.todayProtein ?? 0
+        return entriesData?.todayProtein ?? 0
     }
     
     var carbs: Int {
-        return entries?.todayCarbs ?? 0
+        return entriesData?.todayCarbs ?? 0
     }
     
     var fats: Int {
-        return entries?.todayFat ?? 0
+        return entriesData?.todayFat ?? 0
     }
     
     var calorieGoal: Int {
@@ -74,7 +78,7 @@ class HomeViewModel {
     func loadData() {
         Task {
             do {
-                self.entries = try await dataService.fetchEntries(for: user)
+                self.entriesData = try await dataService.fetchEntries(for: user)
                 self.goals = try await dataService.fetchGoals(for: user)
             } catch {
                 print("Error: \(error)")

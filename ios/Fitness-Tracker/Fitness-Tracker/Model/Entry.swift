@@ -74,4 +74,18 @@ struct Entry: Codable {
         self.time = time
         self.userId = userId
     }
+    
+    static func mock() -> Entry {
+        return Entry(
+            name: "Banana",
+            calories: 100,
+            protein: 10,
+            carbs: 10,
+            fat: 10,
+            servingSize: "1 oz",
+            numServings: 1.0,
+            time: Date(),
+            userId: 1
+        )
+    }
 }
