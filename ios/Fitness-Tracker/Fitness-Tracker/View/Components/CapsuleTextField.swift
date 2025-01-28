@@ -28,7 +28,7 @@ struct CapsuleTextFieldStyle: ViewModifier {
         content
             .textInputAutocapitalization(.never)
             .padding()
-            .background(.gray.opacity(0.2))
+            .background(K.UI.backgroundColor)
             .clipShape(.capsule)
             .overlay(
                 Capsule().stroke(.blue, lineWidth: 2)

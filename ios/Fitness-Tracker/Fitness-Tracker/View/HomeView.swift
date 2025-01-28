@@ -22,8 +22,8 @@ struct HomeView: View {
         ScrollView {
             // Macros
             ZStack {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.gray.opacity(0.2))
+                RoundedRectangle(cornerRadius: K.UI.cornerRadius)
+                    .fill(K.UI.backgroundColor)
                     .padding()
                 
                 VStack(spacing: 30) {
@@ -71,8 +71,11 @@ struct HomeView: View {
             }
             
             // Entries table
-            ForEach(viewModel.entries, id: \.name) { entry in
-                TableCellView(viewModel: TableCellViewModel(entry: entry))
+            VStack {
+                TableHeaderView()
+                ForEach(viewModel.entries, id: \.name) { entry in
+                    TableCellView(viewModel: TableCellViewModel(entry: entry))
+                }
             }
             .padding(.horizontal)
         }

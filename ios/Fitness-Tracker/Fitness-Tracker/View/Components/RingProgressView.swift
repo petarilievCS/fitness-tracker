@@ -11,7 +11,7 @@ struct RingProgressView: View {
     var progress: Double // A value between 0.0 and 1.0
     var lineWidth: CGFloat = 10
     var ringColor: Color = .blue
-    var backgroundColor: Color = .gray.opacity(0.2)
+    var backgroundColor: Color = K.UI.backgroundColor
 
     var body: some View {
         ZStack {

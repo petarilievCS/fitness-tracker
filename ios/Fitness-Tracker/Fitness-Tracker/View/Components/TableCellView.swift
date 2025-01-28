@@ -25,7 +25,7 @@ struct TableCellView: View {
             }
         }
         .padding()
-        .background(.gray.opacity(0.2))
+        .background(K.UI.backgroundColor)
     }
 }
 

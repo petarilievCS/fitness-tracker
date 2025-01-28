@@ -63,7 +63,7 @@ struct NewEntryView: View {
             )
             .datePickerStyle(.compact)
             .padding()
-            .background(.gray.opacity(0.2))
+            .background(K.UI.backgroundColor)
             .cornerRadius(10)
             
             Button(action :{
