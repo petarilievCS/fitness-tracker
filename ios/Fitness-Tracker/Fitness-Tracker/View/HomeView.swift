@@ -11,20 +11,18 @@ struct HomeView: View {
     @State private var viewModel: HomeViewModel
     @AppStorage("userId") private var userId: Int = 0
     
-    // Constants
-    let paddingSize: CGFloat = 50
-    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
     }
     
     var body: some View {
         ScrollView {
+            SectionTitleView(title: "Progress")
+            
             // Macros
             ZStack {
                 RoundedRectangle(cornerRadius: K.UI.cornerRadius)
                     .fill(K.UI.backgroundColor)
-                    .padding()
                 
                 VStack(spacing: 30) {
                     // Calories Ring View
@@ -67,18 +65,20 @@ struct HomeView: View {
                             color: .yellow)
                     }
                 }
-                .padding(paddingSize)
+                .padding(35)
             }
+            
+            SectionTitleView(title: "Entries")
             
             // Entries table
             VStack {
-                TableHeaderView()
                 ForEach(viewModel.entries, id: \.name) { entry in
                     TableCellView(viewModel: TableCellViewModel(entry: entry))
                 }
             }
-            .padding(.horizontal)
+            .cornerRadius(K.UI.cornerRadius, corners: [.allCorners])
         }
+        .padding(.horizontal)
         .overlay(alignment: .bottom) {
             CircleButton {
                 viewModel.isShowingSheet.toggle()
