@@ -11,20 +11,18 @@ import SwiftUI
 class EntriesViewModel {
     private let dataService: DataServiceProtocol
     private let user: Int
-    
-    private var entries: [Entry]?
-    private var goals: Goals?
+    var entries: [Entry] = []
     
     init(user: Int, dataService: DataServiceProtocol) {
         self.dataService = dataService
         self.user = user
+        loadData()
     }
     
     func loadData() {
         Task {
             do {
                 self.entries = try await dataService.fetchEntries(for: user)
-                self.goals = try await dataService.fetchGoals(for: user)
             } catch {
                 print("Error: \(error)")
             }

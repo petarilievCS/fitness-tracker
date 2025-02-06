@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct TableCellView: View {
-    let viewModel: TableCellViewModel
+    private let viewModel: TableCellViewModel
+    
+    init(entry: Entry) {
+        self.viewModel = TableCellViewModel(entry: entry)
+    }
     
     var body: some View {
         HStack {
@@ -24,13 +28,11 @@ struct TableCellView: View {
                 Text(" ")
             }
         }
-        .padding()
-        .background(K.UI.backgroundColor)
     }
 }
 
 #Preview {
-    TableCellView(viewModel: TableCellViewModel(entry: .mock()))
+    TableCellView(entry: .mock())
         .padding()
 }
 

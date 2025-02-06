@@ -210,64 +210,6 @@
             endingLineNumber = "77"
             landmarkName = "loadData()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "96B3D332-D6BB-4AFD-A217-A1613DE6676D - c020d8fdfe171ae7"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "77"
-                  endingLineNumber = "77">
-               </Location>
-               <Location
-                  uuid = "96B3D332-D6BB-4AFD-A217-A1613DE6676D - 5c560e9dee5a7383"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(2) await resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "77"
-                  endingLineNumber = "77">
-               </Location>
-               <Location
-                  uuid = "96B3D332-D6BB-4AFD-A217-A1613DE6676D - ce8caa44b85e56e5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "77"
-                  endingLineNumber = "77">
-               </Location>
-               <Location
-                  uuid = "96B3D332-D6BB-4AFD-A217-A1613DE6676D - b89b565ec08c2ce2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(6) suspend resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "77"
-                  endingLineNumber = "77">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -284,64 +226,6 @@
             endingLineNumber = "78"
             landmarkName = "loadData()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "6F906FA0-2074-45F2-84B1-E9CD87E318A5 - ce8caa44b85e56c4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(3) suspend resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "78"
-                  endingLineNumber = "78">
-               </Location>
-               <Location
-                  uuid = "6F906FA0-2074-45F2-84B1-E9CD87E318A5 - 23e6bf0d3070afa0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(4) await resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "78"
-                  endingLineNumber = "78">
-               </Location>
-               <Location
-                  uuid = "6F906FA0-2074-45F2-84B1-E9CD87E318A5 - b5697fab626892c2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(5) suspend resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "78"
-                  endingLineNumber = "78">
-               </Location>
-               <Location
-                  uuid = "6F906FA0-2074-45F2-84B1-E9CD87E318A5 - a3d530f22db3cec0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(7) suspend resume partial function for closure #1 () async -&gt; () in Fitness_Tracker.HomeViewModel.loadData() -&gt; ()"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/ViewModel/HomeViewModel.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "78"
-                  endingLineNumber = "78">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -358,36 +242,6 @@
             endingLineNumber = "103"
             landmarkName = "fetchIntake(for:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "97751F9D-B421-4E4F-A7D9-943ABA4CDE54 - 7032d2d2727c4d1e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Fitness_Tracker.DataService.fetchIntake(for: Swift.Int) async throws -&gt; Fitness_Tracker.Intake"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/Services/DataService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "103"
-                  endingLineNumber = "103">
-               </Location>
-               <Location
-                  uuid = "97751F9D-B421-4E4F-A7D9-943ABA4CDE54 - b329d15d8be8a39"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for Fitness_Tracker.DataService.fetchIntake(for: Swift.Int) async throws -&gt; Fitness_Tracker.Intake"
-                  moduleName = "Fitness-Tracker.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/petariliev/Desktop/Fitness-Tracker/ios/Fitness-Tracker/Fitness-Tracker/Services/DataService.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "103"
-                  endingLineNumber = "103">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

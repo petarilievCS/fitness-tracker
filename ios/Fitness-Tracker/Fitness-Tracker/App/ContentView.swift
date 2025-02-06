@@ -19,6 +19,10 @@ struct ContentView: View {
                     .tabItem {
                         Label("Home", systemImage: "house.fill")
                     }
+                EntriesView(viewModel: EntriesViewModel(user: userId, dataService: dataService))
+                    .tabItem {
+                        Label("Entries", systemImage: "book.fill")
+                    }
             }
             
         } else {
