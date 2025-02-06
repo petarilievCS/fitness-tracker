@@ -29,6 +29,14 @@ def get_user(id):
     return user
 
 
+# Returns start and end of today
+def get_today():
+    today = datetime.now().date()
+    start_of_today = datetime.combine(today, time.min)
+    end_of_today = datetime.combine(today, time.max)
+    return start_of_today, end_of_today
+
+
 # Root Route
 @app.route("/")
 def hello():
@@ -93,7 +101,7 @@ def create_user():
     except ValidationError as e:
         return jsonify({"error": e.messages}), 400
     except Exception as e:
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify({"error": "Internal server error " + str(e)}), 500
     
 
 # Returns goals for a user
@@ -167,18 +175,16 @@ def delete_user(id):
     return jsonify({"message": "User deleted"}), 200
 
 
-# Returns entires and total intake for a user
-@app.route('/entries/<int:user_id>', methods=['GET'])
-def entries(user_id):
+# Returns current intake for a user (today)
+@app.route('/intake/<int:user_id>', methods=['GET'])
+def intake(user_id):
     # Validate user
     user = get_user(user_id)
     if user == None:
         return jsonify({"error": "User not found"}), 404
     
-    # Get start and end of today
-    today = datetime.now().date()
-    start_of_today = datetime.combine(today, time.min)
-    end_of_today = datetime.combine(today, time.max)
+     # Get start and end of today
+    start_of_today, end_of_today = get_today()
 
     # Query entries
     entries_query = Entry.query.filter(
@@ -188,15 +194,41 @@ def entries(user_id):
         ).order_by(Entry.time.desc())
     entries = entries_query.all()
 
-    # Create response
-    data = {}
-    data["entries"] = entry_schema.dump(entries, many=True)
-    data["today_calories"] = sum(int(entry.calories * entry.num_servings) for entry in entries)
-    data["today_protein"] = sum(int(entry.protein  * entry.num_servings) for entry in entries)
-    data["today_fat"] = sum(int(entry.fat * entry.num_servings) for entry in entries)
-    data["today_carbs"] = sum(int(entry.carbs * entry.num_servings) for entry in entries)
+    # Calculate total intake
+    total_calories = sum(int(entry.calories * entry.num_servings) for entry in entries)
+    total_protein = sum(int(entry.protein * entry.num_servings) for entry in entries)
+    total_fat = sum(int(entry.fat * entry.num_servings) for entry in entries)
+    total_carbs = sum(int(entry.carbs * entry.num_servings) for entry in entries)
 
-    return jsonify(data), 200
+    intake = {
+        "calories": total_calories,
+        "protein": total_protein,
+        "fat": total_fat,
+        "carbs": total_carbs
+    }
+    return jsonify(intake), 200
+
+
+# Returns entries for a user (today)
+@app.route('/entries/<int:user_id>', methods=['GET'])
+def entries(user_id):
+    # Validate user
+    user = get_user(user_id)
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    
+     # Get start and end of today
+    start_of_today, end_of_today = get_today()
+
+    # Query entries
+    entries_query = Entry.query.filter(
+        Entry.user_id == user_id, 
+        Entry.time >= start_of_today, 
+        Entry.time <= end_of_today
+        ).order_by(Entry.time.desc())
+    entries = entries_query.all()
+
+    return jsonify(entry_schema.dump(entries, many=True)), 200
 
 
 # Create a new entry

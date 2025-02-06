@@ -8,7 +8,7 @@ VALUES
 ('Emily', 'Davis', '1992-03-15', 72.3, 175.2, 'Female', 'Maintain', 'Super Active', 'emily.davis@example.com', 'hashedpassword654');
 
 -- Sample Entries
-INSERT INTO entries (na,e calories, protein, fat, carbs, serving_size, num_servings, time, user_id)
+INSERT INTO entries (name, calories, protein, fat, carbs, serving_size, num_servings, time, user_id)
 VALUES
 ('Oatmeal with Berries', 500, 25, 10, 60, 'Cup', 1.0, '2024-12-14 08:00:00+00', 1),
 ('Chicken Salad', 750, 35, 15, 80, 'Bowl', 1.5, '2024-12-14 12:30:00+00', 1),

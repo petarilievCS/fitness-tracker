@@ -60,23 +60,13 @@ struct HomeView: View {
                         MacroRingProgressView(
                             progress: viewModel.fatsProgress,
                             goal: viewModel.fatsGoal,
-                            intake: viewModel.fats,
+                            intake: viewModel.fat,
                             title: "Fats",
                             color: .yellow)
                     }
                 }
                 .padding(35)
             }
-            
-            SectionTitleView(title: "Entries")
-            
-            // Entries table
-            VStack {
-                ForEach(viewModel.entries, id: \.name) { entry in
-                    TableCellView(viewModel: TableCellViewModel(entry: entry))
-                }
-            }
-            .cornerRadius(K.UI.cornerRadius, corners: [.allCorners])
         }
         .padding(.horizontal)
         .overlay(alignment: .bottom) {

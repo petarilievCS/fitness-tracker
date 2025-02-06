@@ -7,15 +7,16 @@
 
 import Foundation
 
-enum LoginError: Error {
+enum DataServiceError: Error {
     case serverError(String)
     case decodingError(String)
     case unknownError
 }
 
 protocol DataServiceProtocol {
-    func fetchEntries(for user: Int) async throws -> Entries
+    func fetchEntries(for user: Int) async throws -> [Entry]
     func fetchGoals(for user: Int) async throws -> Goals
+    func fetchIntake(for user: Int) async throws -> Intake
     func loginUser(email: String, password: String) async throws -> User
     func saveEntry(_ entry: Entry) async throws
 }
@@ -58,16 +59,16 @@ struct DataService: DataServiceProtocol {
         case 400..<500:
             print("Client Side Error")
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw LoginError.serverError(errorResponse.error)
+                throw DataServiceError.serverError(errorResponse.error)
             } else {
-                throw LoginError.decodingError("Error: Unable to decode server error.")
+                throw DataServiceError.decodingError("Error: Unable to decode server error.")
             }
         default:
-            throw LoginError.unknownError
+            throw DataServiceError.unknownError
         }
     }
     
-    func fetchEntries(for user: Int) async throws -> Entries {
+    func fetchEntries(for user: Int) async throws -> [Entry] {
         // 1: Define URL
         guard let url = URL(string: "\(baseUrlString)/entries/\(user)") else {
             throw URLError(.badURL)
@@ -86,16 +87,47 @@ struct DataService: DataServiceProtocol {
         
         switch httpResonse.statusCode {
         case 200:
-            let entries = try decoder.decode(Entries.self, from: data)
+            let entries = try decoder.decode([Entry].self, from: data)
             return entries
         case 400..<500:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw LoginError.serverError(errorResponse.error)
+                throw DataServiceError.serverError(errorResponse.error)
             } else {
-                throw LoginError.decodingError("Error: Unable to decode server error.")
+                throw DataServiceError.decodingError("Error: Unable to decode server error.")
             }
         default:
-            throw LoginError.unknownError
+            throw DataServiceError.unknownError
+        }
+    }
+    
+    func fetchIntake(for user: Int) async throws -> Intake {
+        // 1: Define URL
+        guard let url = URL(string: "\(baseUrlString)/intake/\(user)") else {
+            throw URLError(.badURL)
+        }
+        
+        // 2: Send request
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // 3: Handle response
+        guard let httpResonse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        switch httpResonse.statusCode {
+        case 200:
+            let intake = try decoder.decode(Intake.self, from: data)
+            return intake
+        case 400..<500:
+            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw DataServiceError.serverError(errorResponse.error)
+            } else {
+                throw DataServiceError.decodingError("Error: Unable to decode server error")
+            }
+        default:
+            throw DataServiceError.unknownError
         }
     }
     
@@ -118,12 +150,12 @@ struct DataService: DataServiceProtocol {
             return goals
         case 400..<500:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw LoginError.serverError(errorResponse.error)
+                throw DataServiceError.serverError(errorResponse.error)
             } else {
-                throw LoginError.decodingError("Error: Unable to decode server error.")
+                throw DataServiceError.decodingError("Error: Unable to decode server error.")
             }
         default:
-            throw LoginError.unknownError
+            throw DataServiceError.unknownError
         }
     }
     
@@ -152,9 +184,9 @@ struct DataService: DataServiceProtocol {
             break
         default:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw LoginError.serverError(errorResponse.error)
+                throw DataServiceError.serverError(errorResponse.error)
             } else {
-                throw LoginError.decodingError("Error: Unable to decode server error.")
+                throw DataServiceError.decodingError("Error: Unable to decode server error.")
             }
         }
     }

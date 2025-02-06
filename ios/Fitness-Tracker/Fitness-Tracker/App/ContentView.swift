@@ -14,7 +14,13 @@ struct ContentView: View {
     
     var body: some View {
         if let userId = userId {
-            HomeView(viewModel: HomeViewModel(user: userId, dataService: dataService))
+            TabView {
+                HomeView(viewModel: HomeViewModel(user: userId, dataService: dataService))
+                    .tabItem {
+                        Label("Home", systemImage: "house.fill")
+                    }
+            }
+            
         } else {
             LoginView()
         }
