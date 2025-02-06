@@ -19,6 +19,10 @@ class EntriesViewModel {
         loadData()
     }
     
+    func deleteEntry(_ entry: Entry) {
+        
+    }
+    
     func loadData() {
         Task {
             do {

@@ -190,4 +190,10 @@ struct DataService: DataServiceProtocol {
             }
         }
     }
+    
+    func deleteEntry(_ Entry: entry) {
+        guard let url = URL(string: "\(baseUrlString)/entry") else {
+            throw URLError(.badURL)
+        }
+    }
 }

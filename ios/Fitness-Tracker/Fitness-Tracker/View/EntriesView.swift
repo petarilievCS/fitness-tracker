@@ -16,8 +16,17 @@ struct EntriesView: View {
     }
     
     var body: some View {
-        List(viewModel.entries, id: \.name) { entry in
-            TableCellView(entry: entry)
+        List {
+            ForEach(viewModel.entries, id: \.name) { entry in
+                TableCellView(entry: entry)
+                    .swipeActions {
+                        Button(role: .destructive) {
+                            viewModel.deleteEntry(entry)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                        }
+                    }
+            }
         }
     }
 }
