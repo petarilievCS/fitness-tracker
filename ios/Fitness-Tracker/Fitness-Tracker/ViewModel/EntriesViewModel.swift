@@ -11,7 +11,9 @@ import SwiftUI
 class EntriesViewModel {
     private let dataService: DataServiceProtocol
     private let user: Int
-    var entries: [Entry] = []
+    var entries: [Entry] {
+        dataService.entries
+    }
     
     init(user: Int, dataService: DataServiceProtocol) {
         self.dataService = dataService
@@ -20,13 +22,15 @@ class EntriesViewModel {
     }
     
     func deleteEntry(_ entry: Entry) {
-        
+        Task {
+            try await dataService.deleteEntry(entry)
+        }
     }
     
     func loadData() {
         Task {
             do {
-                self.entries = try await dataService.fetchEntries(for: user)
+               try await dataService.fetchEntries(for: user)
             } catch {
                 print("Error: \(error)")
             }

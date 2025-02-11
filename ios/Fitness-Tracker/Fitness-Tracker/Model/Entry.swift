@@ -8,6 +8,7 @@
 import Foundation
 
 struct Entry: Codable {
+    var id: String
     let name: String
     let calories: Int
     let protein: Int
@@ -19,6 +20,7 @@ struct Entry: Codable {
     let userId: Int
     
     enum CodingKeys: String, CodingKey {
+        case id
         case name
         case calories
         case protein
@@ -40,6 +42,9 @@ struct Entry: Codable {
         servingSize = try container.decode(String.self, forKey: .servingSize)
         userId = try container.decode(Int.self, forKey: .userId)
         
+        let idInt = try container.decode(Int.self, forKey: .id)
+        id = String(idInt)
+        
         let numServingsString = try container.decode(String.self, forKey: .numServings)
         if let numServingsDouble = Double(numServingsString) {
             numServings = numServingsDouble
@@ -52,6 +57,7 @@ struct Entry: Codable {
         }
         
         let timeString = try container.decode(String.self, forKey: .time)
+        print(timeString)
         if let formattedTime = APITimeFormatter.shared.date(from: timeString) {
             time = formattedTime
         } else {
@@ -64,6 +70,7 @@ struct Entry: Codable {
     }
     
     init(name: String, calories: Int, protein: Int, carbs: Int, fat: Int, servingSize: String, numServings: Double, time: Date, userId: Int) {
+        self.id = UUID().uuidString
         self.name = name
         self.calories = calories
         self.protein = protein

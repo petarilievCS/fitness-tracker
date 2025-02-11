@@ -8,8 +8,16 @@
 import Foundation
 
 class MockDataService: DataServiceProtocol {
-    func fetchEntries(for user: Int) async throws -> [Entry] {
+    var entries: [Entry] {
         return mockEntires
+    }
+    
+    func deleteEntry(_ entry: Entry) async throws {
+        return 
+    }
+    
+    func fetchEntries(for user: Int) async throws {
+        return
     }
     
     func fetchGoals(for user: Int) async throws -> Goals {

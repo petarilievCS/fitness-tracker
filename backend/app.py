@@ -43,6 +43,15 @@ def hello():
     return "Hello"
 
 
+# Returns user with given id
+@app.route('/user/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.get(id)
+    if user == None:
+        return jsonify({"error": "User not found"}), 404
+    return jsonify(user_schema.dump(user)), 200
+
+
 # Login Route
 @app.route('/login', methods=['POST'])
 def login():
@@ -229,6 +238,15 @@ def entries(user_id):
     entries = entries_query.all()
 
     return jsonify(entry_schema.dump(entries, many=True)), 200
+
+
+# Get entry by ID
+@app.route('/entry/<int:id>', methods=['GET'])
+def get_entry(id):
+    entry = Entry.query.get(id)
+    if entry == None:
+        return jsonify({"error": "Entry not found"}), 404
+    return jsonify(entry_schema.dump(entry)), 200
 
 
 # Create a new entry

@@ -14,6 +14,8 @@ push:
 
 deploy:
 	@echo 'Deploying Docker image...'
+	gcloud config set account petariliev2002@gmail.com
+	gcloud config set project calorie-tracker-444422
 	gcloud run deploy $(IMAGE) \
 		--image gcr.io/$(PROJECT_ID)/$(IMAGE) \
 		--region $(REGION) \
