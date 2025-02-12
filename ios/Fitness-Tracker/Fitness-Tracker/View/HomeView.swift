@@ -17,7 +17,6 @@ struct HomeView: View {
     
     var body: some View {
         ScrollView {
-            SectionTitleView(title: "Progress")
             
             // Macros
             ZStack {
