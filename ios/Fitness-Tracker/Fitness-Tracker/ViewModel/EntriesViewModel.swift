@@ -18,7 +18,7 @@ class EntriesViewModel {
     init(user: Int, dataService: DataServiceProtocol) {
         self.dataService = dataService
         self.user = user
-        loadData()
+        // loadData()
     }
     
     func deleteEntry(_ entry: Entry) {

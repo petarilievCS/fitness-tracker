@@ -17,12 +17,11 @@ enum DataServiceError: Error {
 protocol DataServiceProtocol {
     // Variables
     var entries: [Entry] { get }
-    var goals: Goals { get }
+    var goals: Goals? { get }
     
     // Methods
     func fetchEntries(for user: Int) async throws
-    func fetchGoals(for user: Int) async throws -> Goals
-    func fetchIntake(for user: Int) async throws -> Intake
+    func fetchGoals(for user: Int) async throws
     func loginUser(email: String, password: String) async throws -> User
     func saveEntry(_ entry: Entry) async throws
     func deleteEntry(_ entry: Entry) async throws
@@ -116,72 +115,37 @@ class DataService: DataServiceProtocol {
         }
     }
     
-    func fetchIntake(for user: Int) async throws -> Intake {
-        // 1: Define URL
-        guard let url = URL(string: "\(baseUrlString)/intake/\(user)") else {
-            throw URLError(.badURL)
-        }
-        
-        // 2: Send request
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        // 3: Handle response
-        guard let httpResonse = response as? HTTPURLResponse else {
-            throw URLError(.badServerResponse)
-        }
-        
-        switch httpResonse.statusCode {
-        case 200:
-            let intake = try decoder.decode(Intake.self, from: data)
-            return intake
-        case 400..<500:
-            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw DataServiceError.serverError(errorResponse.error)
-            } else {
-                throw DataServiceError.decodingError("Error: Unable to decode server error")
-            }
-        default:
-            throw DataServiceError.unknownError
-        }
-    }
-    
-    func fetchGoals(for user: Int) async throws -> Goals {
+    func fetchGoals(for user: Int) async throws {
         guard let url = URL(string: "\(baseUrlString)/goals/\(user)") else {
             throw URLError(.badURL)
         }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
+        
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
         
-        switch httpResponse.statusCode {
-        case 200:
-            let goals = try decoder.decode(Goals.self, from: data)
-            return goals
-        case 400..<500:
-            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw DataServiceError.serverError(errorResponse.error)
-            } else {
+        guard httpResponse.statusCode == 200 else {
+            guard let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) else {
                 throw DataServiceError.decodingError("Error: Unable to decode server error.")
             }
-        default:
-            throw DataServiceError.unknownError
+            throw DataServiceError.serverError(errorResponse.error)
         }
+        goals = try decoder.decode(Goals.self, from: data)
     }
     
     func saveEntry(_ entry: Entry) async throws {
         // Local update
+        print(entries)
         entries.append(entry)
         
         // Data
         var newEntry = entry
-        newEntry.id = "" // Remove temp ID
+        newEntry.id = nil // Remove temp ID
         let encodedData = try encoder.encode(newEntry)
         
         // Set-up request
@@ -203,7 +167,6 @@ class DataService: DataServiceProtocol {
             if let index = self.entries.firstIndex(where: { $0.id == entry.id }) {
                 self.entries[index].id = serverEntry.id // Sync ID with server
             }
-            break
         default:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
                 throw DataServiceError.serverError(errorResponse.error)
@@ -220,7 +183,8 @@ class DataService: DataServiceProtocol {
         }
         
         // Set-up request
-        let url = URL(string: "\(baseUrlString)/entry/\(entry.id)")!
+        guard let id = entry.id else { return }
+        let url = URL(string: "\(baseUrlString)/entry/\(id)")!
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         

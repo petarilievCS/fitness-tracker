@@ -8,8 +8,17 @@
 import Foundation
 
 class MockDataService: DataServiceProtocol {
-    var entries: [Entry] {
-        return mockEntires
+    var entries: [Entry]
+    var goals: Goals?
+    
+    init() {
+        entries = mockEntires
+        goals = Goals(
+            caloriesGoal: K.defaultCalories,
+            proteinGoal: K.defaultProtein,
+            carbsGoal: K.defaultCarbs,
+            fatsGoal: K.defaultFat
+        )
     }
     
     func deleteEntry(_ entry: Entry) async throws {
@@ -20,17 +29,8 @@ class MockDataService: DataServiceProtocol {
         return
     }
     
-    func fetchGoals(for user: Int) async throws -> Goals {
-        return Goals(
-            caloriesGoal: K.defaultCalories,
-            proteinGoal: K.defaultProtein,
-            carbsGoal: K.defaultCarbs,
-            fatsGoal: K.defaultFat
-        )
-    }
-    
-    func fetchIntake(for user: Int) async throws -> Intake {
-        return .mock()
+    func fetchGoals(for user: Int) async throws {
+        return
     }
     
     func loginUser(email: String, password: String) async throws -> User {

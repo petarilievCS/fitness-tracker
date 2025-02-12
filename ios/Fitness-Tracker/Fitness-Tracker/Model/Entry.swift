@@ -8,7 +8,7 @@
 import Foundation
 
 struct Entry: Codable {
-    var id: String
+    var id: String?
     let name: String
     let calories: Int
     let protein: Int
@@ -57,7 +57,6 @@ struct Entry: Codable {
         }
         
         let timeString = try container.decode(String.self, forKey: .time)
-        print(timeString)
         if let formattedTime = APITimeFormatter.shared.date(from: timeString) {
             time = formattedTime
         } else {

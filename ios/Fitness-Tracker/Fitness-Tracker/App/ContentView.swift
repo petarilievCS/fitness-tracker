@@ -24,7 +24,12 @@ struct ContentView: View {
                         Label("Entries", systemImage: "book.fill")
                     }
             }
-            
+            .onAppear() {
+                Task {
+                    try await dataService.fetchEntries(for: userId)
+                    try await dataService.fetchGoals(for: userId)
+                }
+            }
         } else {
             LoginView()
         }

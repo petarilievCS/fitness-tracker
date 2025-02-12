@@ -9,42 +9,39 @@ import SwiftUI
 
 @Observable
 class HomeViewModel {
-    private let dataService: DataServiceProtocol
+    private var dataService: DataServiceProtocol
     private let user: Int
     
-    private var intake: Intake?
-    private var goals: Goals?
-    
     var calories: Int {
-        return intake?.calories ?? 0
+        return dataService.entries.reduce(0) { $0 + $1.calories }
     }
     
     var protein: Int {
-        return intake?.protein ?? 0
+        return dataService.entries.reduce(0) { $0 + $1.protein }
     }
     
     var carbs: Int {
-        return intake?.carbs ?? 0
+        return dataService.entries.reduce(0) { $0 + $1.carbs }
     }
     
     var fat: Int {
-        return intake?.fat ?? 0
+        return dataService.entries.reduce(0) { $0 + $1.fat }
     }
     
     var calorieGoal: Int {
-        return goals?.caloriesGoal ?? K.defaultCalories
+        return dataService.goals?.caloriesGoal ?? K.defaultCalories
     }
     
     var proteinGoal: Int {
-        return goals?.proteinGoal ?? K.defaultProtein
+        return dataService.goals?.proteinGoal ?? K.defaultProtein
     }
     
     var carbsGoal: Int {
-        return goals?.carbsGoal ?? K.defaultCarbs
+        return dataService.goals?.carbsGoal ?? K.defaultCarbs
     }
     
     var fatsGoal: Int {
-        return goals?.fatsGoal ?? K.defaultFat
+        return dataService.goals?.fatsGoal ?? K.defaultFat
     }
     
     var calorieProgress: Double {
@@ -68,14 +65,13 @@ class HomeViewModel {
     init(user: Int, dataService: DataServiceProtocol) {
         self.user = user
         self.dataService = dataService
-        loadData()
     }
     
     func loadData() {
         Task {
             do {
-                self.intake = try await dataService.fetchIntake(for: user)
-                self.goals = try await dataService.fetchGoals(for: user)
+                try await dataService.fetchGoals(for: user)
+                try await dataService.fetchEntries(for: user)
             } catch {
                 print("Error: \(error)")
             }

@@ -22,7 +22,7 @@ def validate_time(time_str):
     
 
 # Get user
-def get_user(id):
+def get_user_from_db(id):
     user = User.query.get(id)
     if user == None:
         None
@@ -117,7 +117,7 @@ def create_user():
 @app.route('/goals/<int:user_id>', methods=['GET'])
 def goals(user_id):
     # Validate user
-    user = get_user(user_id)
+    user = get_user_from_db(user_id)
     if user == None:
         return jsonify({"error": "User not found"}), 404
     
@@ -188,7 +188,7 @@ def delete_user(id):
 @app.route('/intake/<int:user_id>', methods=['GET'])
 def intake(user_id):
     # Validate user
-    user = get_user(user_id)
+    user = get_user_from_db(user_id)
     if user == None:
         return jsonify({"error": "User not found"}), 404
     
@@ -222,7 +222,7 @@ def intake(user_id):
 @app.route('/entries/<int:user_id>', methods=['GET'])
 def entries(user_id):
     # Validate user
-    user = get_user(user_id)
+    user = get_user_from_db(user_id)
     if user == None:
         return jsonify({"error": "User not found"}), 404
     
