@@ -56,4 +56,8 @@ class MockDataService: DataServiceProtocol {
     func saveEntry(_ entry: Entry) async throws {
         return
     }
+    
+    func sendText(_ text: String) async throws {
+        return
+    }
 }

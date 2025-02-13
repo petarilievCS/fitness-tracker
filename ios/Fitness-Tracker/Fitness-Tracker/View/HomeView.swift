@@ -69,21 +69,25 @@ struct HomeView: View {
         }
         .padding(.horizontal)
         .overlay(alignment: .bottom) {
-            CircleButton {
-                viewModel.isShowingSheet.toggle()
+            HStack(spacing: 20) {
+                CircleButton(image: Image(systemName: "plus")) {
+                    viewModel.activeSheet = .addEntry
+                }
+                CircleButton(image: Image("chatIcon")) {
+                    viewModel.activeSheet = .chat
+                }
             }
         }
-        .sheet(isPresented: $viewModel.isShowingSheet) {
-            NewEntryView(
-                viewModel: NewEntryViewModel(
-                    dataService: DataService(),
-                    user: userId,
-                    onSave: {
-                        viewModel.loadData()
-                    }
-                )
-            )
-        }
+        .sheet(item: $viewModel.activeSheet, onDismiss: {
+            viewModel.activeSheet = nil
+        }, content: { activeSheet in
+            switch activeSheet {
+            case .addEntry:
+                NewEntryView(viewModel: NewEntryViewModel(dataService: DataService(),user: userId))
+            case .chat:
+                Text("Chat")
+            }
+        })
     }
 }
 

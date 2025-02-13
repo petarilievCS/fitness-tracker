@@ -19,12 +19,15 @@ protocol DataServiceProtocol {
     var entries: [Entry] { get }
     var goals: Goals? { get }
     
-    // Methods
+    // DB Methods
     func fetchEntries(for user: Int) async throws
     func fetchGoals(for user: Int) async throws
     func loginUser(email: String, password: String) async throws -> User
     func saveEntry(_ entry: Entry) async throws
     func deleteEntry(_ entry: Entry) async throws
+    
+    // ChatGPT Methods
+    func sendText(_ text: String) async throws
 }
 
 @Observable
@@ -203,5 +206,9 @@ class DataService: DataServiceProtocol {
             }
 
         }
+    }
+    
+    func sendText(_ text: String) async throws {
+        return
     }
 }

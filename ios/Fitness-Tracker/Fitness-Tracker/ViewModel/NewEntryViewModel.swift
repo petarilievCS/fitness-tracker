@@ -37,12 +37,9 @@ class NewEntryViewModel {
     var servingSizeShakeTrigger: Bool = false
     var numberOfServingsShakeTrigger: Bool = false
     
-    var onSave: () -> Void = { }
-    
-    init(dataService: DataServiceProtocol, user: Int, onSave: @escaping () -> Void) {
+    init(dataService: DataServiceProtocol, user: Int) {
         self.dataService = dataService
         self.user = user
-        self.onSave = onSave
     }
     
     func addEntryButtonTapped() -> Bool {
@@ -66,7 +63,6 @@ class NewEntryViewModel {
         Task {
             do {
                 try await dataService.saveEntry(entry)
-                onSave()
             } catch {
                 print(error)
             }

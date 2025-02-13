@@ -101,5 +101,5 @@ struct NewEntryView: View {
 #Preview {
     @Previewable @State var isPresented: Bool = false
     NewEntryView(
-        viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1, onSave: {}))
+        viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1))
 }
