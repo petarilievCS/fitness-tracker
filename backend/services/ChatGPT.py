@@ -1,5 +1,6 @@
 from openai import OpenAI
 import os
+import json
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -38,7 +39,12 @@ def parse_meal(meal_description):
             messages=[{"role": "user", "content": prompt}]
         )
 
-        return response.choices[0].message.content
+        parsed_response = json.loads(response.choices[0].message.content)
+        return parsed_response
+    
+    except json.JSONDecodeError:
+        print("Error: OpenAI response is not valid JSON.")
+        return {"error": "Failed to process meal"}
     except Exception as e:
         print(f"Error parsing meal: {e}")
         return {"error": "Failed to process meal"}

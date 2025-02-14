@@ -1,12 +1,13 @@
 import re
 
-from datetime import datetime, time, date
+from datetime import datetime, time, timezone
 from flask import request, jsonify
 from models import app, db, User, Entry
 from marshmallow import ValidationError
 from schema import user_schema, entry_schema
 from utils import calculate_bmr, apply_activity_multiplier, adjust_for_goal, calculate_macros
 
+from services import ChatGPT
 
 # Validate time format
 def validate_time(time_str):
@@ -329,6 +330,47 @@ def delete_entry(id):
     db.session.commit()
 
     return jsonify({"message": "Entry deleted"}), 200 
+
+# Parse meal using ChatGPT
+@app.route("/parse-meal", methods=["POST"])
+def parse_meal():
+    try:
+        # Parse and validate data
+        data = request.get_json()
+        meal_description = data.get("meal_description")
+        user_id = data.get("user_id")
+        if meal_description == None:
+            return jsonify({"error": "Please provide a meal"}), 400
+
+        # Parse meal with ChatGPT
+        parsed_meal = ChatGPT.parse_meal(meal_description)
+        parsed_meal["user_id"] = user_id
+        parsed_meal['time'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
+
+        # Create new entry
+        # TODO: Refactor into method
+        new_entry = Entry(
+            user_id=parsed_meal["user_id"],
+            name=parsed_meal["name"],
+            calories=parsed_meal["calories"],
+            protein=parsed_meal["protein"],
+            fat=parsed_meal["fat"],
+            carbs=parsed_meal["carbs"],
+            serving_size=parsed_meal["serving_size"],
+            num_servings=parsed_meal["num_servings"],
+            time=parsed_meal["time"],
+        )
+
+        # Add entry to database
+        db.session.add(new_entry)
+        db.session.commit()
+        
+        # Add newly generated id
+        parsed_meal["id"] = new_entry.id
+        
+        return jsonify(parsed_meal), 200
+    except Exception as e:
+        return jsonify({"error": "Internal server error"}), 500
     
 
 if __name__ == "__main__":
