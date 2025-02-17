@@ -11,8 +11,8 @@ struct ChatView:  View {
     @Environment(\.dismiss) var dismiss
     @State var viewModel: ChatViewModel
     
-    init(viewModel: ChatViewModel) {
-        self.viewModel = viewModel
+    init(dataService: DataServiceProtocol, userId: Int) {
+        self.viewModel = ChatViewModel(dataService: dataService, user: userId)
     }
     
     var body: some View {
@@ -59,33 +59,6 @@ struct ChatView:  View {
     }
 }
 
-@Observable
-class ChatViewModel: ObservableObject {
-    private var dataService: DataServiceProtocol
-    
-    var text: String = ""
-    var isLoading: Bool = false
-    var entryAdded = false
-    
-    var isButtonDisabled: Bool {
-        return isLoading || text.isEmpty
-    }
-    
-    var buttonColor: Color {
-        return isButtonDisabled ? .gray : .blue
-    }
-    
-    init(dataService: DataServiceProtocol) {
-        self.dataService = dataService
-    }
-    
-    func submitButtonTapped() {
-        Task {
-            try await dataService.sendText(text)
-        }
-    }
-}
-
 #Preview {
-    ChatView(viewModel: ChatViewModel(dataService: MockDataService()))
+    ChatView(dataService: MockDataService(), userId: 0)
 }

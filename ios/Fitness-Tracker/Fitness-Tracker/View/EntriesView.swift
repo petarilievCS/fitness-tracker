@@ -11,8 +11,8 @@ struct EntriesView: View {
     @State private var viewModel: EntriesViewModel
     private let testList = [1, 2, 3]
     
-    init(viewModel: EntriesViewModel) {
-        self.viewModel = viewModel
+    init(dataService: DataServiceProtocol, userId: Int) {
+        self.viewModel = EntriesViewModel(user: userId, dataService: dataService)
     }
     
     var body: some View {
@@ -32,5 +32,5 @@ struct EntriesView: View {
 }
 
 #Preview {
-    EntriesView(viewModel: EntriesViewModel(user: 1, dataService: MockDataService()))
+    EntriesView(dataService: MockDataService(), userId: 0)
 }

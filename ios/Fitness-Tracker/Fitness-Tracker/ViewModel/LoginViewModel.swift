@@ -10,13 +10,17 @@ import SwiftUI
 @Observable
 class LoginViewModel {
     let userDefaults = UserDefaults.standard
-    let dataService = DataService()
+    let dataService: DataServiceProtocol
     
     var email: String = ""
     var password: String = ""
     var showAlert: Bool = false
     var alertTitle: String = ""
     var alertMessage: String = ""
+    
+    init(dataService: DataServiceProtocol) {
+        self.dataService = dataService
+    }
     
     func loginButtonPressed() {
         // Validate user input

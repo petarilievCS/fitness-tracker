@@ -9,10 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var viewModel: HomeViewModel
-    @AppStorage("userId") private var userId: Int = 0
     
-    init(viewModel: HomeViewModel) {
-        self.viewModel = viewModel
+    @AppStorage("userId") private var userId: Int = 0
+    @Environment(\.dataService) private var dataService
+    
+    init(dataService: DataServiceProtocol, userId: Int) {
+        self.viewModel = HomeViewModel(user: userId, dataService: dataService)
     }
     
     var body: some View {
@@ -83,14 +85,14 @@ struct HomeView: View {
         }, content: { activeSheet in
             switch activeSheet {
             case .addEntry:
-                NewEntryView(viewModel: NewEntryViewModel(dataService: DataService(),user: userId))
+                NewEntryView(dataService: dataService, userId: userId)
             case .chat:
-                Text("Chat")
+                ChatView(dataService: dataService, userId: userId)
             }
         })
     }
 }
 
 #Preview {
-    HomeView(viewModel: HomeViewModel(user: 1, dataService: MockDataService()))
+    HomeView(dataService: MockDataService(), userId: 0)
 }

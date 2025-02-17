@@ -368,9 +368,9 @@ def parse_meal():
         # Add newly generated id
         parsed_meal["id"] = new_entry.id
         
-        return jsonify(parsed_meal), 200
+        return jsonify(entry_schema.dump(new_entry)), 201
     except Exception as e:
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify({"error": f"Internal server error: {e}"}), 500
     
 
 if __name__ == "__main__":
