@@ -373,5 +373,23 @@ def parse_meal():
         return jsonify({"error": f"Internal server error: {e}"}), 500
     
 
+# Parse an image using ChatGPT
+@app.route("/parse-image", methods=["POST"])
+def parse_image():
+    try:
+        # Get image
+        if "image" not in request.files:
+            return jsonify({"error": "No image provided"}), 400
+        
+        image = request.files["image"]
+        user_id = request.form.get("user_id")
+        
+        # Convert image to text descriptionWou
+
+        return jsonify({"message": "success"}), 201
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {e}"}), 500
+    
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

@@ -1,3 +1,4 @@
+import base64
 from openai import OpenAI
 import os
 import json
@@ -49,8 +50,32 @@ def parse_meal(meal_description):
         print(f"Error parsing meal: {e}")
         return {"error": "Failed to process meal"}
     
+
+# Convert image to base64
+def encode_image(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
+
+# Sends an image of a meal to ChatGPT and returns textual description
+def classify_image(image_path):
+    image_data = encode_image(image_path)
+
+    response = client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=[
+            {"role": "system", "content": "You are an AI that recognizes objects in Images."},
+            {"role": "user", "content": [
+                {"type": "text", "text": "Describe the object in this image."},
+                {"type": "image_url", "image_url": {"url": image_path}}
+            ]}
+        ],
+        max_tokens=50
+    )
+
+    return response["choices"][0]["message"]["content"]
+    
 # Testing purposes
 if __name__ == "__main__":
     while True:
-        user_input = input("Describe your meal: ")
-        print(parse_meal(user_input))
+        user_input = input("What is the image file: ")
+        print(classify_image(user_input))
