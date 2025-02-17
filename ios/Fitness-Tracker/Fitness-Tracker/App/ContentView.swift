@@ -9,14 +9,13 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("userId") private var userId: Int?
-    
-    private let dataService = DataService()
+    @Environment(\.dataService) var dataService: DataService
     
     var body: some View {
         if let userId = userId {
             TabView {
                 NavigationStack {
-                    HomeView(viewModel: HomeViewModel(user: userId, dataService: dataService))
+                    HomeView(dataService: dataService, userId: userId)
                         .navigationTitle("Dashboard")
                 }
                 .tabItem {
@@ -24,7 +23,7 @@ struct ContentView: View {
                 }
                 
                 NavigationStack {
-                    EntriesView(viewModel: EntriesViewModel(user: userId, dataService: dataService))
+                    EntriesView(dataService: dataService, userId: userId)
                         .navigationTitle("Entries")
                 }
                 .tabItem {
@@ -38,7 +37,7 @@ struct ContentView: View {
                 }
             }
         } else {
-            LoginView()
+            LoginView(dataService: dataService)
         }
     }
 }

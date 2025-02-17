@@ -11,6 +11,10 @@ struct NewEntryView: View {
     @State var viewModel: NewEntryViewModel
     @Environment(\.dismiss) var dismiss
     
+    init(dataService: DataServiceProtocol, userId: Int) {
+        self.viewModel = NewEntryViewModel(dataService: dataService, user: userId)
+    }
+    
     var body: some View {
         VStack(spacing: 10) {
             CustomTextField(
@@ -100,6 +104,5 @@ struct NewEntryView: View {
 
 #Preview {
     @Previewable @State var isPresented: Bool = false
-    NewEntryView(
-        viewModel: NewEntryViewModel(dataService: MockDataService(), user: 1, onSave: {}))
+    NewEntryView(dataService: MockDataService(), userId: 0)
 }

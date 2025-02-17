@@ -19,12 +19,27 @@ protocol DataServiceProtocol {
     var entries: [Entry] { get }
     var goals: Goals? { get }
     
-    // Methods
+    // DB Methods
     func fetchEntries(for user: Int) async throws
     func fetchGoals(for user: Int) async throws
     func loginUser(email: String, password: String) async throws -> User
     func saveEntry(_ entry: Entry) async throws
     func deleteEntry(_ entry: Entry) async throws
+    
+    // ChatGPT Methods
+    func parseMeal(_ mealDescription: String, for userId: Int) async throws
+}
+
+
+private struct DataServiceKey: EnvironmentKey {
+    static let defaultValue: DataService = DataService()
+}
+
+extension EnvironmentValues {
+    var dataService: DataService {
+        get { self[DataServiceKey.self] }
+        set { self[DataServiceKey.self] = newValue }
+    }
 }
 
 @Observable
@@ -140,8 +155,7 @@ class DataService: DataServiceProtocol {
     
     func saveEntry(_ entry: Entry) async throws {
         // Local update
-        print(entries)
-        entries.append(entry)
+        entries.insert(entry, at: 0)
         
         // Data
         var newEntry = entry
@@ -202,6 +216,38 @@ class DataService: DataServiceProtocol {
                 throw DataServiceError.decodingError("Error: Unable to decode server error.")
             }
 
+        }
+    }
+    
+    // Uses ChatGPT to parse the given meal description
+    func parseMeal(_ mealDescription: String, for userId: Int) async throws {
+        // Encode data
+        let objectData = MealDescription(mealDescription: mealDescription, userId: userId)
+        let encodedData = try encoder.encode(objectData)
+        
+        // Set-up request
+        let url = URL(string: "\(baseUrlString)/parse-meal")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = encodedData
+        
+        // Perform request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Handle response
+        let httpResponse = response as! HTTPURLResponse
+        switch httpResponse.statusCode {
+        case 201:
+            let serverEntry = try! decoder.decode(Entry.self, from: data)
+            self.entries.insert(serverEntry, at: 0)
+        default:
+            print("Error parsing meal:")
+            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw DataServiceError.serverError(errorResponse.error)
+            } else {
+                throw DataServiceError.decodingError("Error: Unable to decode server error.")
+            }
         }
     }
 }

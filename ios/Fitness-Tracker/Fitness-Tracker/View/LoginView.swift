@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State private var viewModel: LoginViewModel = LoginViewModel()
+    @State private var viewModel: LoginViewModel
+    
+    init(dataService: DataServiceProtocol) {
+        self.viewModel = LoginViewModel(dataService: dataService)
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
@@ -37,5 +41,5 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
+    LoginView(dataService: MockDataService())
 }

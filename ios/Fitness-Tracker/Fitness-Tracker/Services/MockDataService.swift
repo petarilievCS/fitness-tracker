@@ -8,6 +8,10 @@
 import Foundation
 
 class MockDataService: DataServiceProtocol {
+    func parseMeal(_ mealDescription: String, for userId: Int) async throws {
+        return
+    }
+    
     var entries: [Entry]
     var goals: Goals?
     
@@ -54,6 +58,10 @@ class MockDataService: DataServiceProtocol {
     }
     
     func saveEntry(_ entry: Entry) async throws {
+        return
+    }
+    
+    func parseMeal(_ text: String) async throws {
         return
     }
 }

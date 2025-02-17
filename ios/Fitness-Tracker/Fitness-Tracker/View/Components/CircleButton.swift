@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CircleButton: View {
+    let image: Image
     let action: () -> Void
     
     var body: some View {
@@ -19,7 +20,8 @@ struct CircleButton: View {
                     .fill(.blue)
                     .frame(width: 60, height: 60)
                 
-                Image(systemName: "plus")
+                image.resizable()
+                    .frame(width: 40, height: 40)
                     .foregroundStyle(.white)
                     .font(.system(size: 30, weight: .bold))
             }
@@ -29,7 +31,12 @@ struct CircleButton: View {
 }
 
 #Preview {
-    CircleButton {
+    CircleButton(image: Image("chatIcon")) {
+        print("Button tapped!")
+    }
+    CircleButton(image: Image(systemName: "plus")) {
         print("Button tapped!")
     }
 }
+
+

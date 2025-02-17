@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct Fitness_TrackerApp: App {
+    @State private var dataService = DataService()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.dataService, dataService)
         }
     }
 }

@@ -9,10 +9,12 @@ import SwiftUI
 
 struct HomeView: View {
     @State private var viewModel: HomeViewModel
-    @AppStorage("userId") private var userId: Int = 0
     
-    init(viewModel: HomeViewModel) {
-        self.viewModel = viewModel
+    @AppStorage("userId") private var userId: Int = 0
+    @Environment(\.dataService) private var dataService
+    
+    init(dataService: DataServiceProtocol, userId: Int) {
+        self.viewModel = HomeViewModel(user: userId, dataService: dataService)
     }
     
     var body: some View {
@@ -69,24 +71,28 @@ struct HomeView: View {
         }
         .padding(.horizontal)
         .overlay(alignment: .bottom) {
-            CircleButton {
-                viewModel.isShowingSheet.toggle()
+            HStack(spacing: 20) {
+                CircleButton(image: Image(systemName: "plus")) {
+                    viewModel.activeSheet = .addEntry
+                }
+                CircleButton(image: Image("chatIcon")) {
+                    viewModel.activeSheet = .chat
+                }
             }
         }
-        .sheet(isPresented: $viewModel.isShowingSheet) {
-            NewEntryView(
-                viewModel: NewEntryViewModel(
-                    dataService: DataService(),
-                    user: userId,
-                    onSave: {
-                        viewModel.loadData()
-                    }
-                )
-            )
-        }
+        .sheet(item: $viewModel.activeSheet, onDismiss: {
+            viewModel.activeSheet = nil
+        }, content: { activeSheet in
+            switch activeSheet {
+            case .addEntry:
+                NewEntryView(dataService: dataService, userId: userId)
+            case .chat:
+                ChatView(dataService: dataService, userId: userId)
+            }
+        })
     }
 }
 
 #Preview {
-    HomeView(viewModel: HomeViewModel(user: 1, dataService: MockDataService()))
+    HomeView(dataService: MockDataService(), userId: 0)
 }

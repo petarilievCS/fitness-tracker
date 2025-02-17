@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+enum ActiveSheet: Identifiable {
+    case addEntry
+    case chat
+    
+    var id: String {
+        switch self {
+        case .addEntry: return "addEntry"
+        case .chat: return "chat"
+        }
+    }
+}
+
 @Observable
 class HomeViewModel {
     private var dataService: DataServiceProtocol
@@ -60,7 +72,7 @@ class HomeViewModel {
         return min(Double(fat) / Double(fatsGoal), 1)
     }
     
-    var isShowingSheet: Bool = false
+    var activeSheet: ActiveSheet? = nil
         
     init(user: Int, dataService: DataServiceProtocol) {
         self.user = user
