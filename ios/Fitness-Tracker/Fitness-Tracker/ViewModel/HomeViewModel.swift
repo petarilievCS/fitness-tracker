@@ -75,6 +75,14 @@ class HomeViewModel {
     }
     
     var activeSheet: ActiveSheet? = nil
+    
+    var image: UIImage? {
+        didSet {
+            Task {
+                try await dataService.parseImage(image!, for: user)
+            }
+        }
+    }
         
     init(user: Int, dataService: DataServiceProtocol) {
         self.user = user

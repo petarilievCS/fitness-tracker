@@ -82,6 +82,7 @@ struct HomeView: View {
                     viewModel.activeSheet = .camera
                 }
             }
+            .padding(.bottom, 10)
         }
         .sheet(item: $viewModel.activeSheet, onDismiss: {
             viewModel.activeSheet = nil
@@ -92,7 +93,7 @@ struct HomeView: View {
             case .chat:
                 ChatView(dataService: dataService, userId: userId)
             case .camera:
-                EmptyView()
+                ImagePickerView(image: $viewModel.image)
             }
         })
     }
