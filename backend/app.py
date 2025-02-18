@@ -262,20 +262,8 @@ def create_entry():
         if User.query.get(entry_data["user_id"]) == None:
             return jsonify({"error": "User not found"}), 404
 
-        # Create new entry
-        new_entry = Entry(
-            user_id=entry_data["user_id"],
-            name=entry_data["name"],
-            calories=entry_data["calories"],
-            protein=entry_data["protein"],
-            fat=entry_data["fat"],
-            carbs=entry_data["carbs"],
-            serving_size=entry_data["serving_size"],
-            num_servings=entry_data["num_servings"],
-            time=entry_data["time"],
-        )
-
         # Add entry to database
+        new_entry = Entry.from_dict(parsed_meal)
         db.session.add(new_entry)
         db.session.commit()
 
@@ -347,27 +335,47 @@ def parse_meal():
         parsed_meal["user_id"] = user_id
         parsed_meal['time'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
 
-        # Create new entry
-        # TODO: Refactor into method
-        new_entry = Entry(
-            user_id=parsed_meal["user_id"],
-            name=parsed_meal["name"],
-            calories=parsed_meal["calories"],
-            protein=parsed_meal["protein"],
-            fat=parsed_meal["fat"],
-            carbs=parsed_meal["carbs"],
-            serving_size=parsed_meal["serving_size"],
-            num_servings=parsed_meal["num_servings"],
-            time=parsed_meal["time"],
-        )
-
         # Add entry to database
+        new_entry = Entry.from_dict(parsed_meal)
         db.session.add(new_entry)
         db.session.commit()
         
         # Add newly generated id
         parsed_meal["id"] = new_entry.id
         
+        return jsonify(entry_schema.dump(new_entry)), 201
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {e}"}), 500
+    
+
+# Parse an image using ChatGPT
+@app.route("/parse-image", methods=["POST"])
+def parse_image():
+    try:
+        # Get image
+        if "image" not in request.files:
+            return jsonify({"error": "No image provided"}), 400
+        
+        image = request.files["image"]
+        user_id = request.form.get("user_id")
+        
+        # Convert image to text description
+        image_data = image.read()
+        image_descripton = ChatGPT.classify_image(image_data)
+        
+        # Parse image decsription
+        parsed_meal = ChatGPT.parse_meal(image_descripton)
+        parsed_meal["user_id"] = user_id
+        parsed_meal["time"] = datetime.now(timezone.utc).isoformat(timespec='seconds')
+
+        # Add entry to database
+        new_entry = Entry.from_dict(parsed_meal)
+        db.session.add(new_entry)
+        db.session.commit()
+
+        # Inform client of newly generated ID
+        parsed_meal["id"] = new_entry.id
+
         return jsonify(entry_schema.dump(new_entry)), 201
     except Exception as e:
         return jsonify({"error": f"Internal server error: {e}"}), 500

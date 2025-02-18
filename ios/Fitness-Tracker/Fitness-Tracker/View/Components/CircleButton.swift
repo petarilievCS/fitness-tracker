@@ -21,6 +21,7 @@ struct CircleButton: View {
                     .frame(width: 60, height: 60)
                 
                 image.resizable()
+                    .scaledToFit()
                     .frame(width: 40, height: 40)
                     .foregroundStyle(.white)
                     .font(.system(size: 30, weight: .bold))
@@ -36,6 +37,9 @@ struct CircleButton: View {
     }
     CircleButton(image: Image(systemName: "plus")) {
         print("Button tapped!")
+    }
+    CircleButton(image: Image(systemName: "camera")) {
+        print("Button tapped")
     }
 }
 

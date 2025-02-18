@@ -10,11 +10,13 @@ import SwiftUI
 enum ActiveSheet: Identifiable {
     case addEntry
     case chat
+    case camera
     
     var id: String {
         switch self {
         case .addEntry: return "addEntry"
         case .chat: return "chat"
+        case .camera: return "camera"
         }
     }
 }
@@ -73,6 +75,14 @@ class HomeViewModel {
     }
     
     var activeSheet: ActiveSheet? = nil
+    
+    var image: UIImage? {
+        didSet {
+            Task {
+                try await dataService.parseImage(image!, for: user)
+            }
+        }
+    }
         
     init(user: Int, dataService: DataServiceProtocol) {
         self.user = user

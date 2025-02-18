@@ -78,7 +78,11 @@ struct HomeView: View {
                 CircleButton(image: Image("chatIcon")) {
                     viewModel.activeSheet = .chat
                 }
+                CircleButton(image: Image(systemName: "camera")) {
+                    viewModel.activeSheet = .camera
+                }
             }
+            .padding(.bottom, 10)
         }
         .sheet(item: $viewModel.activeSheet, onDismiss: {
             viewModel.activeSheet = nil
@@ -88,6 +92,8 @@ struct HomeView: View {
                 NewEntryView(dataService: dataService, userId: userId)
             case .chat:
                 ChatView(dataService: dataService, userId: userId)
+            case .camera:
+                ImagePickerView(image: $viewModel.image)
             }
         })
     }
