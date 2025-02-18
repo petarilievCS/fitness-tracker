@@ -10,11 +10,13 @@ import SwiftUI
 enum ActiveSheet: Identifiable {
     case addEntry
     case chat
+    case camera
     
     var id: String {
         switch self {
         case .addEntry: return "addEntry"
         case .chat: return "chat"
+        case .camera: return "camera"
         }
     }
 }

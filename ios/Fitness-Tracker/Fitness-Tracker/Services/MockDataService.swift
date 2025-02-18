@@ -6,8 +6,13 @@
 //
 
 import Foundation
+import UIKit
 
 class MockDataService: DataServiceProtocol {
+    func parseImage(_ image: UIImage, for userId: Int) async throws {
+        return
+    }
+    
     func parseMeal(_ mealDescription: String, for userId: Int) async throws {
         return
     }

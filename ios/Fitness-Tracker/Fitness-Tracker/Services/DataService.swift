@@ -28,6 +28,7 @@ protocol DataServiceProtocol {
     
     // ChatGPT Methods
     func parseMeal(_ mealDescription: String, for userId: Int) async throws
+    func parseImage(_ image: UIImage, for userId: Int) async throws
 }
 
 
