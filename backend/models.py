@@ -85,3 +85,18 @@ class Entry(db.Model):
         positive_check("carbs"),
         db.CheckConstraint("num_servings >= 0", name="num_servings_check"),
     )
+
+    @classmethod
+    def from_dict(cls, data):
+        """Creates an Entry instance from a dictionary."""
+        return cls(
+            user_id=data["user_id"],
+            name=data["name"],
+            calories=data["calories"],
+            protein=data["protein"],
+            fat=data["fat"],
+            carbs=data["carbs"],
+            serving_size=data["serving_size"],
+            num_servings=data["num_servings"],
+            time=data["time"],
+        )
