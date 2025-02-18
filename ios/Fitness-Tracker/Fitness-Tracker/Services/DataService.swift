@@ -242,7 +242,55 @@ class DataService: DataServiceProtocol {
             let serverEntry = try! decoder.decode(Entry.self, from: data)
             self.entries.insert(serverEntry, at: 0)
         default:
-            print("Error parsing meal:")
+            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                throw DataServiceError.serverError(errorResponse.error)
+            } else {
+                throw DataServiceError.decodingError("Error: Unable to decode server error.")
+            }
+        }
+    }
+    
+    // Uses ChatGPT to convert the given image to an Entry
+    func parseImage(_ image: UIImage, for userId: Int) async throws {
+        // Setup request
+        let boundary = UUID().uuidString
+        let url = URL(string: "\(baseUrlString)/parse-image")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        // Convert image to data
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            throw DataServiceError.decodingError("Error: Unable to decode image.")
+        }
+        
+        // Setup body
+        var body = Data()
+        
+        // Append user_id field
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"user_id\"\r\n\r\n".data(using: .utf8)!)
+        body.append("\(userId)\r\n".data(using: .utf8)!)
+        
+        // Append image fields
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+        body.append(imageData)
+        body.append("\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        request.httpBody = body
+        
+        // Perform request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Handle response
+        let httpResponse = response as! HTTPURLResponse
+        switch httpResponse.statusCode {
+        case 201:
+            let serverEntry = try! decoder.decode(Entry.self, from: data)
+            self.entries.insert(serverEntry, at: 0)
+        default:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
                 throw DataServiceError.serverError(errorResponse.error)
             } else {
