@@ -1,6 +1,7 @@
 import base64
 from openai import OpenAI
 import os
+import io
 import json
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -78,6 +79,19 @@ def classify_image(image):
     )
 
     return response.choices[0].message.content
+
+# Transcribes the given audi file to text
+def transcribe_audio(audio):
+    audio_bytes = io.BytesIO(audio.read())
+    filename = audio.filename
+    file_extension = filename.split(".")[-1].lower()
+
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=("audio." + file_extension, audio_bytes, f"audio/{file_extension}"),
+        response_format="text"
+    )
+    return transcription
     
 # Testing purposes
 if __name__ == "__main__":

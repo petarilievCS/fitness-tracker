@@ -381,5 +381,24 @@ def parse_image():
         return jsonify({"error": f"Internal server error: {e}"}), 500
     
 
+# Parses a voice explanation of a meal
+@app.route("/parse-voice", methods=["POST"])
+def parse_voice():
+    try:
+        # Get voice note
+        if "audio" not in request.files:
+            return jsonify({"error": "No audio file provided"}), 400
+        
+        audio_file = request.files["audio"]
+        user_id = request.form.get("user_id")
+
+        transcription = ChatGPT.transcribe_audio(audio_file)
+
+        # Transcribe audio file
+        return jsonify({"message": transcription}), 201
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {e}"}), 500
+    
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
