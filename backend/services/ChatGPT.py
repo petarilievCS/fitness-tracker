@@ -29,6 +29,7 @@ def parse_meal(meal_description):
     - The "num_servings" should be a decimal, representing the number of servings.
     - The "serving_size" should be a string describing the portion (e.g., "cup", "bowl", "piece").
     - Ensure the response is **valid JSON** with no extra text.
+    - The num_servings field can be at most 25 characters
 
     Now, based on this structure, please parse the following meal description:
 

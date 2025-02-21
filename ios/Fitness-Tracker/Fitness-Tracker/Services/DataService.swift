@@ -208,7 +208,7 @@ class DataService: DataServiceProtocol {
         let httpResonse = response as! HTTPURLResponse
         switch httpResonse.statusCode {
         case 201:
-            print("Successfully deleted entry")
+            
             break
         default:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
@@ -237,18 +237,7 @@ class DataService: DataServiceProtocol {
         let (data, response) = try await URLSession.shared.data(for: request)
         
         // Handle response
-        let httpResponse = response as! HTTPURLResponse
-        switch httpResponse.statusCode {
-        case 201:
-            let serverEntry = try! decoder.decode(Entry.self, from: data)
-            self.entries.insert(serverEntry, at: 0)
-        default:
-            if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
-                throw DataServiceError.serverError(errorResponse.error)
-            } else {
-                throw DataServiceError.decodingError("Error: Unable to decode server error.")
-            }
-        }
+        try handleResponse(response, data: data)
     }
     
     // Uses ChatGPT to convert the given image to an Entry
@@ -266,26 +255,56 @@ class DataService: DataServiceProtocol {
         }
         
         // Setup body
-        var body = Data()
-        
-        // Append user_id field
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"user_id\"\r\n\r\n".data(using: .utf8)!)
-        body.append("\(userId)\r\n".data(using: .utf8)!)
-        
-        // Append image fields
-        body.append("--\(boundary)\r\n".data(using: .utf8)!)
-        body.append("Content-Disposition: form-data; name=\"image\"; filename=\"image.jpg\"\r\n".data(using: .utf8)!)
-        body.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
-        body.append(imageData)
-        body.append("\r\n".data(using: .utf8)!)
-        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        let body = getBody(with: imageData, name: "image", format: "jpeg", boundary: boundary, userId: userId)
         request.httpBody = body
         
         // Perform request
         let (data, response) = try await URLSession.shared.data(for: request)
         
         // Handle response
+        try handleResponse(response, data: data)
+    }
+    
+    // Uses ChatGPT to convert given voice note (audio file) to entry
+    func parseVoice(audio: Data, for userId: Int) async throws {
+        // Setup request
+        let boundary = UUID().uuidString
+        let url = URL(string: "\(baseUrlString)/parse-voice")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        // Setup body
+        let body = getBody(with: audio, name: "audio", format: "m4a", boundary: boundary, userId: userId)
+        request.httpBody = body
+        
+        // Perform request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Handle response
+        try handleResponse(response, data: data)
+    }
+    
+    // Utils
+    
+    private func getBody(with data: Data, name: String, format: String, boundary: String, userId: Int) -> Data {
+        var body = Data()
+        
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"user_id\"\r\n\r\n".data(using: .utf8)!)
+        body.append("\(userId)\r\n".data(using: .utf8)!)
+        
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(name).\(format)\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: \(name)/\(format)\r\n\r\n".data(using: .utf8)!)
+        body.append(data)
+        body.append("\r\n".data(using: .utf8)!)
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        return body
+    }
+    
+    private func handleResponse(_ response: URLResponse, data: Data) throws {
         let httpResponse = response as! HTTPURLResponse
         switch httpResponse.statusCode {
         case 201:
@@ -293,6 +312,7 @@ class DataService: DataServiceProtocol {
             self.entries.insert(serverEntry, at: 0)
         default:
             if let errorResponse = try? decoder.decode(ErrorResponse.self, from: data) {
+                print(errorResponse.error)
                 throw DataServiceError.serverError(errorResponse.error)
             } else {
                 throw DataServiceError.decodingError("Error: Unable to decode server error.")
