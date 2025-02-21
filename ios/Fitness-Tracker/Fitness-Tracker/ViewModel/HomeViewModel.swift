@@ -11,12 +11,14 @@ enum ActiveSheet: Identifiable {
     case addEntry
     case chat
     case camera
+    case microphone
     
     var id: String {
         switch self {
         case .addEntry: return "addEntry"
         case .chat: return "chat"
         case .camera: return "camera"
+        case .microphone: return "microphone"
         }
     }
 }

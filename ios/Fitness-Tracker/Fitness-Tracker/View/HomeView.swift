@@ -81,6 +81,9 @@ struct HomeView: View {
                 CircleButton(image: Image(systemName: "camera")) {
                     viewModel.activeSheet = .camera
                 }
+                CircleButton(image: Image(systemName: "microphone")) {
+                    viewModel.activeSheet = .microphone
+                }
             }
             .padding(.bottom, 10)
         }
@@ -94,6 +97,8 @@ struct HomeView: View {
                 ChatView(dataService: dataService, userId: userId)
             case .camera:
                 ImagePickerView(image: $viewModel.image)
+            case .microphone:
+                EmptyView()
             }
         })
     }
