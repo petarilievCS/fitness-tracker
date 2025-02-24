@@ -29,6 +29,7 @@ protocol DataServiceProtocol {
     // ChatGPT Methods
     func parseMeal(_ mealDescription: String, for userId: Int) async throws
     func parseImage(_ image: UIImage, for userId: Int) async throws
+    func parseVoice(audio: Data, for userId: Int) async throws
 }
 
 
@@ -275,7 +276,7 @@ class DataService: DataServiceProtocol {
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
         // Setup body
-        let body = getBody(with: audio, name: "audio", format: "m4a", boundary: boundary, userId: userId)
+        let body = getBody(with: audio, name: "audio", format: "mp4", boundary: boundary, userId: userId)
         request.httpBody = body
         
         // Perform request

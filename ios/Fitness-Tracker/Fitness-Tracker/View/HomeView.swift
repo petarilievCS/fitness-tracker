@@ -98,7 +98,7 @@ struct HomeView: View {
             case .camera:
                 ImagePickerView(image: $viewModel.image)
             case .microphone:
-                EmptyView()
+                VoiceRecorderView(dataService: dataService, userId: userId)
             }
         })
     }

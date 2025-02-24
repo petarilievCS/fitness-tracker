@@ -15,7 +15,7 @@ class AudioRecorder {
     var audioURL: URL?
     
     func startRecording() {
-        let audioFilename = getDocumentsDirectory().appendingPathComponent("audio.m4a")
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("audio.mp4")
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44100,
@@ -23,7 +23,11 @@ class AudioRecorder {
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
         
+        let audioSession = AVAudioSession.sharedInstance()
+        
         do {
+            try audioSession.setCategory(.playAndRecord, mode: .default)
+            try audioSession.setActive(true)
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
             audioRecorder.record()
             audioURL = nil
@@ -35,6 +39,9 @@ class AudioRecorder {
     func stopRecording() {
         audioRecorder.stop()
         audioURL = audioRecorder.url
+        
+        let audioPlayer = try! AVAudioPlayer(contentsOf: audioURL!)
+//        audioPlayer.play()
     }
     
     private func getDocumentsDirectory() -> URL {

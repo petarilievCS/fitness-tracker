@@ -9,6 +9,10 @@ import Foundation
 import UIKit
 
 class MockDataService: DataServiceProtocol {
+    func parseVoice(audio: Data, for userId: Int) async throws {
+        return
+    }
+    
     func parseImage(_ image: UIImage, for userId: Int) async throws {
         return
     }
