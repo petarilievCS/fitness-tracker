@@ -38,6 +38,11 @@ def get_today():
     return start_of_today, end_of_today
 
 
+# Returns current time
+def get_now():
+    return datetime.now(timezone.utc).isoformat(timespec='seconds')
+
+
 # Root Route
 @app.route("/")
 def hello():
@@ -333,8 +338,8 @@ def parse_meal():
         # Parse meal with ChatGPT
         parsed_meal = ChatGPT.parse_meal(meal_description)
         parsed_meal["user_id"] = user_id
-        parsed_meal['time'] = datetime.now(timezone.utc).isoformat(timespec='seconds')
-
+        parsed_meal['time'] = get_now()
+        
         # Add entry to database
         new_entry = Entry.from_dict(parsed_meal)
         db.session.add(new_entry)
@@ -366,7 +371,7 @@ def parse_image():
         # Parse image decsription
         parsed_meal = ChatGPT.parse_meal(image_descripton)
         parsed_meal["user_id"] = user_id
-        parsed_meal["time"] = datetime.now(timezone.utc).isoformat(timespec='seconds')
+        parsed_meal["time"] = get_now()
 
         # Add entry to database
         new_entry = Entry.from_dict(parsed_meal)
@@ -376,6 +381,38 @@ def parse_image():
         # Inform client of newly generated ID
         parsed_meal["id"] = new_entry.id
 
+        return jsonify(entry_schema.dump(new_entry)), 201
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {e}"}), 500
+    
+
+# Parses a voice explanation of a meal
+@app.route("/parse-voice", methods=["POST"])
+def parse_voice():
+    try:
+        # Get voice note
+        if "audio" not in request.files:
+            return jsonify({"error": "No audio file provided"}), 400
+        
+        audio_file = request.files["audio"]
+        user_id = request.form.get("user_id")
+
+        # Transcribe audio files
+        transcription = ChatGPT.transcribe_audio(audio_file)
+
+        # Parse transcription
+        parsed_meal = ChatGPT.parse_meal(transcription)
+        parsed_meal["user_id"] = user_id
+        parsed_meal["time"] = get_now()
+
+        # Store in database
+        new_entry = Entry.from_dict(parsed_meal)
+        db.session.add(new_entry)
+        db.session.commit()
+
+        # Inform client of newly generated ID
+        parsed_meal["id"] = new_entry.id
+        
         return jsonify(entry_schema.dump(new_entry)), 201
     except Exception as e:
         return jsonify({"error": f"Internal server error: {e}"}), 500
