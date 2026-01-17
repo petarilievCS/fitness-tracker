@@ -1,0 +1,3 @@
+# Fitness Tracker
+
+iOS application that lets the user track their daily caloric and macronutrient intake to achieve their fitness goals. The user can log meals through multiple input methods including text description, food photo analysis, and voice notes, all powered by OpenAI's GPT and Whisper models for intelligent nutritional parsing. The app calculates personalized daily calorie and macro targets based on the user's profile (height, weight, age, activity level) and fitness goal (cut, maintain, or bulk), displaying progress through circular ring visualizations. The application is developed in Swift using the SwiftUI framework, with a Python Flask REST API backend and PostgreSQL database for data persistence.
